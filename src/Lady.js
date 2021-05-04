@@ -1,12 +1,17 @@
 import * as THREE from '../libs/three.module.js'
 import { ThreeBSP } from '../libs/ThreeBSP.js'
 
+function degToRad(deg) {
+    return deg * (Math.PI / 180);
+}
+
 class Lady extends THREE.Object3D {
     constructor(gui, titleGui) {
         super();
         //Cabeza - nodo
         //Materiales
-        var materialCabecilla = new THREE.MeshPhongMaterial();
+        var texturaCuerpo = new THREE.TextureLoader().load('../img/cuerpo.jpeg');
+        var materialCuerpo = new THREE.MeshPhongMaterial({ map: texturaCuerpo });
         var materialOjitos = new THREE.MeshPhongMaterial({ color: 0x000000, transparent: true, opacity: 0.7 });
         var materialMofletes = new THREE.MeshPhongMaterial({ color: 0xFF0000, transparent: true, opacity: 0.7 });
 
@@ -14,7 +19,7 @@ class Lady extends THREE.Object3D {
         var geomOvalo = new THREE.SphereBufferGeometry(1, 30, 30);
 
         //Malla cabeza
-        this.craneo = new THREE.Mesh(geomOvalo, materialCabecilla);
+        this.craneo = new THREE.Mesh(geomOvalo, materialCuerpo);
         this.craneo.scale.y = 1.2;
         this.craneo.scale.x = 1.1;
         this.craneo.scale.z = 0.9;
@@ -56,52 +61,78 @@ class Lady extends THREE.Object3D {
         this.mofleteI.position.set(-0.4, -0.025, 0.6);
 
         //Cuernos
+        //Material cuernos
+        var texturaMadera =  new THREE.TextureLoader().load('../img/madera-negra.jpg');
+        var materialCuernos = new THREE.MeshPhongMaterial({ map: texturaMadera,  transparent: true, opacity: 0.8});
+        
+        // Variables para la animacion
+        this.altura_cuernos = 1.2;
+        this.ancho_cuernos = 1;
+        this.subir = true;
+        
+        //Geometria y creacion de las mallas de lo cuernos
+        var cuernoGeom = new THREE.ConeBufferGeometry(0.2,0.5,30,30);
+
+        this.cuernoI = new THREE.Mesh(cuernoGeom, materialCuernos);
+        this.cuernoI.position.set(-this.ancho_cuernos, this.altura_cuernos, 0);
+        this.cuernoI.rotation.z = degToRad(40);
+
+        this.cuernoD = new THREE.Mesh(cuernoGeom, materialCuernos);
+        this.cuernoD.position.set(this.ancho_cuernos, this.altura_cuernos, 0);
+        this.cuernoD.rotation.z = degToRad(-40);
+
 
         this.cabeza = new THREE.Object3D();
-        this.cabeza.add(this.craneo, this.ojoD, this.ojoI, this.mofleteD, this.mofleteI);
+        this.cabeza.add(this.craneo, this.ojoD, this.ojoI, this.mofleteD, this.mofleteI, this.cuernoD, this.cuernoI);
         this.cabeza.position.y = 1;
 
         // TODO: ¿Cómo podemos hacer una capa?
         //Cuerpo
+        //Textura
+        var texturaVestido = new THREE.TextureLoader().load('../img/vestido.jpg');
+       
         //Materiales
-        var materialTronquillo = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-        var materialBracito = new THREE.MeshPhongMaterial();
-        var materialPiernita = new THREE.MeshPhongMaterial();
+        var materialTronquillo1 = new THREE.MeshPhongMaterial({ map: texturaVestido, color: 0x8d0002 });
+        var materialTronquillo2 = new THREE.MeshPhongMaterial({ map: texturaVestido, color: 0x8d0002 });
+
 
         //Tronco
-        var tronco1Geom = new THREE.CylinderGeometry(0.5, 1.1, 1.7, 30, 30);
-        this.tronco1 = new THREE.Mesh(tronco1Geom, materialTronquillo);
+        var tronco1Geom = new THREE.CylinderBufferGeometry(0.5, 1.1, 1.7, 30, 30);
+        this.tronco1 = new THREE.Mesh(tronco1Geom, materialTronquillo1);
         this.tronco1.position.y = -tronco1Geom.parameters.height / 2;
+        this.tronco1.rotation.y = Math.PI;
 
 
-        var tronco2Geom = new THREE.CylinderGeometry(1.1, 1.8, 0.9, 30, 30);
-        this.tronco2 = new THREE.Mesh(tronco2Geom, materialTronquillo);
+        var tronco2Geom = new THREE.CylinderBufferGeometry(1.1, 1.8, 0.9, 30, 30);
+        this.tronco2 = new THREE.Mesh(tronco2Geom, materialTronquillo2);
         this.tronco2.position.y = -tronco1Geom.parameters.height - tronco2Geom.parameters.height / 2;
+        this.tronco2.rotation.y = Math.PI;
+
         this.cuerpo = new THREE.Object3D();
         this.cuerpo.add(this.tronco1, this.tronco2, this.cabeza);
         this.cuerpo.position.y = tronco1Geom.parameters.height + tronco2Geom.parameters.height;
 
         //Brazos
-        var hombroGeom = new THREE.SphereGeometry(0.3, 30, 30);
-        var brazoGeom = new THREE.CylinderGeometry(0.1, 0.3, 2, 30, 30);
-        var manoGeom = new THREE.SphereGeometry(0.2, 30, 30);
+        var hombroGeom = new THREE.SphereBufferGeometry(0.3, 30, 30);
+        var brazoGeom = new THREE.CylinderBufferGeometry(0.1, 0.3, 2, 30, 30);
+        var manoGeom = new THREE.SphereBufferGeometry(0.2, 30, 30);
 
         //Brazo Derecho
-        this.brazoDM = new THREE.Mesh(brazoGeom, materialBracito);
+        this.brazoDM = new THREE.Mesh(brazoGeom, materialCuerpo);
         this.brazoDM.rotation.z = -Math.PI / 2;
         this.brazoDM.position.x = brazoGeom.parameters.height / 2 + hombroGeom.parameters.radius - 0.1;
-        this.hombroDM = new THREE.Mesh(hombroGeom, materialBracito);
+        this.hombroDM = new THREE.Mesh(hombroGeom, materialCuerpo);
         this.hombroDM.add(this.brazoDM);
-        this.manoDM = new THREE.Mesh(manoGeom, materialBracito);
+        this.manoDM = new THREE.Mesh(manoGeom, materialCuerpo);
         this.manoDM.position.x = manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2;
 
         //Brazo Izquierdo
-        this.brazoIM = new THREE.Mesh(brazoGeom, materialBracito);
+        this.brazoIM = new THREE.Mesh(brazoGeom, materialCuerpo);
         this.brazoIM.rotation.z = Math.PI / 2;
         this.brazoIM.position.x = - (brazoGeom.parameters.height / 2 + hombroGeom.parameters.radius - 0.1);
-        this.hombroIM = new THREE.Mesh(hombroGeom, materialBracito);
+        this.hombroIM = new THREE.Mesh(hombroGeom, materialCuerpo);
         this.hombroIM.add(this.brazoIM);
-        this.manoIM = new THREE.Mesh(manoGeom, materialBracito);
+        this.manoIM = new THREE.Mesh(manoGeom, materialCuerpo);
         this.manoIM.position.x = -(manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2);
 
         //Nodo brazos Izq
@@ -121,16 +152,16 @@ class Lady extends THREE.Object3D {
 
         //Piernas
         var piernaGeom = new THREE.ConeBufferGeometry(0.4, 2.5, 30, 5);
-        var ingleGeom = new THREE.SphereGeometry(0.3, 30, 30);
+        var ingleGeom = new THREE.SphereBufferGeometry(0.3, 30, 30);
 
-        this.piernaIM = new THREE.Mesh(piernaGeom, materialPiernita);
-        this.piernaI = new THREE.Mesh(ingleGeom, materialPiernita);
+        this.piernaIM = new THREE.Mesh(piernaGeom, materialCuerpo);
+        this.piernaI = new THREE.Mesh(ingleGeom, materialCuerpo);
         this.piernaI.add(this.piernaIM);
         this.piernaIM.rotation.z = Math.PI;
         this.piernaIM.position.y = -(piernaGeom.parameters.height / 2);
 
-        this.piernaDM = new THREE.Mesh(piernaGeom, materialPiernita);
-        this.piernaD = new THREE.Mesh(ingleGeom, materialPiernita);
+        this.piernaDM = new THREE.Mesh(piernaGeom, materialCuerpo);
+        this.piernaD = new THREE.Mesh(ingleGeom, materialCuerpo);
         this.piernaD.add(this.piernaDM);
         this.piernaDM.rotation.z = Math.PI;
         this.piernaDM.position.y = -(piernaGeom.parameters.height / 2);
@@ -144,6 +175,12 @@ class Lady extends THREE.Object3D {
         this.lady.position.y = piernaGeom.parameters.height;
 
         this.add(this.lady);
+
+        //Para controlar el tiempo de la animacion
+        this.tiempoAns = Date.now();
+        this.tiempoAnterior = Date.now();
+        this.cerrar = true;
+        this.parpadeo = false;
     }
 
     createGUI(gui, titleGui) {
@@ -171,8 +208,76 @@ class Lady extends THREE.Object3D {
     }
 
     update() {
+        
+        //Animacion ojos
+        var tiempoActual = Date.now();
+        
+        if(!this.parpadeo){
+            var intervalo = ( tiempoActual - this.tiempoAnterior) / 1000;
+        }
+        else{
+            var intervalo = 0;
+        }
+
+        //Para la animacion del cierre de los ojos
+        var seg = ( tiempoActual - this.tiempoAns) / 1000;
+
+        if(this.parpadeo){
+            if(this.cerrar)
+            {
+                this.ojoD.scale.y -= 2.5 * seg;
+                this.ojoI.scale.y -= 2.5 * seg;
+
+                if(this.ojoD.scale.y <= 0.01)
+                    this.cerrar = false;
+            }
+            else
+            {
+                this.ojoD.scale.y += 2.5 * seg;
+                this.ojoI.scale.y += 2.5 * seg;
+                
+                if(this.ojoD.scale.y >= 1.2 * 0.4){
+                    this.cerrar = true;
+                    this.parpadeo = false;
+                    this.tiempoAnterior = tiempoActual;
+                }
+            }
+        }
+        this.tiempoAns = tiempoActual;
+
+        //Parpadeo   
+         if(intervalo >= 5)
+         {
+            this.parpadeo = true;
+            
+         }
+
+        // Animacion cuernos
+        var altura_max = 1.4;
+        var altura_min = 1.2;
+
+        if(this.subir){
+            this.altura_cuernos += 0.002;
+            this.ancho_cuernos += 0.002;
+
+            if(this.altura_cuernos >= altura_max )
+                this.subir = false;
+                
+        }else if(!this.subir){
+            this.altura_cuernos -= 0.002;
+            this.ancho_cuernos -= 0.002;
+
+            if(this.altura_cuernos <= altura_min )
+                this.subir = true;
+        }
+
+        this.cuernoI.position.set(-this.ancho_cuernos, this.altura_cuernos, 0);
+        this.cuernoD.position.set(this.ancho_cuernos, this.altura_cuernos, 0);
 
     }
+
+
+    
 
 }
 
