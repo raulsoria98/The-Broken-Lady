@@ -135,6 +135,20 @@ class Lady extends THREE.Object3D {
         this.manoIM = new THREE.Mesh(manoGeom, materialCuerpo);
         this.manoIM.position.x = -(manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2);
 
+        // Arma
+        var geomMango = new THREE.CylinderBufferGeometry(0.15, 0.15, 2, 30, 30);
+        var geomMazo = new THREE.BoxBufferGeometry(2,0.7,0.7);
+
+        this.mango = new THREE.Mesh(geomMango, materialCuerpo);
+        this.mazo = new THREE.Mesh(geomMazo, materialCuernos);
+        this.mazo.position.y += this.mazo.geometry.parameters.height/2 + this.mango.geometry.parameters.height;
+        this.mango.position.y += this.mango.geometry.parameters.height/2;
+
+        this.arma = new THREE.Object3D();
+        this.arma.add(this.mango, this.mazo);
+        this.arma.rotation.y += degToRad(90);
+        this.arma.position.x += this.brazoIM.geometry.parameters.height + this.hombroIM.geometry.parameters.radius;
+
         //Nodo brazos Izq
         var altura_brazos = 1.85;
         var separacion_brazos = 0.4;
@@ -143,15 +157,19 @@ class Lady extends THREE.Object3D {
         this.brazoI.add(this.hombroIM, this.manoIM);
         this.brazoI.position.y = altura_brazos;
         this.brazoI.position.x = -separacion_brazos;
+        this.brazoI.rotation.z = degToRad(40);
 
         //Nodo brazos Dcho
         this.brazoD = new THREE.Object3D();
-        this.brazoD.add(this.hombroDM, this.manoDM);
+        this.brazoD.add(this.hombroDM, this.manoDM, this.arma);
         this.brazoD.position.y = altura_brazos;
         this.brazoD.position.x = separacion_brazos;
+        this.brazoD.rotation.z = degToRad(-40);
+
 
         //Piernas
-        var piernaGeom = new THREE.ConeBufferGeometry(0.4, 2.5, 30, 5);
+        this.largoPierna = 2.5;
+        var piernaGeom = new THREE.ConeBufferGeometry(0.4, this.largoPierna, 30, 5);
         var ingleGeom = new THREE.SphereBufferGeometry(0.3, 30, 30);
 
         this.piernaIM = new THREE.Mesh(piernaGeom, materialCuerpo);
@@ -181,6 +199,16 @@ class Lady extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
         this.cerrar = true;
         this.parpadeo = false;
+
+
+        //Para controlar la animacion de las piernas
+        this.pierna_d_mov = true;
+        this.paso_tope = -0.5;
+
+        //Para controlar la animacion del salto
+        this.preparando_salto = true;
+        this.saltar = true;
+
     }
 
     createGUI(gui, titleGui) {
@@ -207,7 +235,73 @@ class Lady extends THREE.Object3D {
         folder.add(this.guiControls, 'reset').name('[ Reset ]');
     }
 
+    //Funciones para el movimiento
+    abajo(){
+
+    }
+
+    derecha(){
+        this.position.x += 1;
+    }
+
+    izquierda(){
+        this.position.x -= 1;
+    }
+
     update() {
+
+        //Animacion pasos
+        /**if(this.piernaD.rotation.x > this.paso_tope && this.pierna_d_mov){ 
+            this.piernaD.rotation.x-=0.001;
+            this.piernaI.rotation.x+= 0.001;
+        }
+        else
+            this.pierna_d_mov = false;
+
+        if(!this.pierna_d_mov){
+            if( this.piernaI.rotation.x > this.paso_tope){
+                this.lady.position.z += 0.001;
+                this.piernaI.rotation.x -= 0.001;
+                this.piernaD.rotation.x += 0.001;
+            }
+            else
+                this.pierna_d_mov = true;
+
+        }*/
+
+        var factor_escala_salto = 0.013;
+        var factor_elevacion_salto = 0.1;
+ 
+        //Animacion salto
+        if(this.saltar){
+        if(this.preparando_salto){
+            if(this.piernaI.scale.y > 0.5){
+                this.piernaI.scale.y -= factor_escala_salto;
+                this.piernaD.scale.y -= factor_escala_salto;
+
+                
+                this.lady.position.y -= this.largoPierna * factor_escala_salto;
+            }
+            else{
+                this.preparando_salto = false;
+            }
+        }
+
+        if(!this.preparando_salto){
+            if(this.piernaI.scale.y < 1){
+                this.piernaI.scale.y += factor_escala_salto;
+                this.piernaD.scale.y += factor_escala_salto;
+
+                 
+                this.lady.position.y += this.largoPierna * factor_escala_salto + factor_elevacion_salto;
+            }
+            else{
+                this.preparando_salto = true;
+                this.saltar = false;
+            }
+        }
+        }
+
         
         //Animacion ojos
         var tiempoActual = Date.now();

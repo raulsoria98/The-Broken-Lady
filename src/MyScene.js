@@ -201,6 +201,29 @@ class MyScene extends THREE.Scene {
     // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
     requestAnimationFrame(() => this.update())
   }
+
+   
+  //Para el movimiento
+  pulsarTecla(tecla) {
+    switch (tecla.key) {
+      case 'a':
+        console.log(this.lady);
+        this.lady.izquierda();
+        break;
+      
+      case 'd':
+        console.log("derecha");
+        this.lady.derecha();
+        break;
+  
+      case ' ':
+        console.log("saltar");
+    
+      default:
+        break;
+    }
+  }
+  
 }
 
 /// La función   main
@@ -211,7 +234,11 @@ $(function () {
 
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener("resize", () => scene.onWindowResize());
-
+  window.addEventListener('keydown', scene.pulsarTecla);
+ 
   // Que no se nos olvide, la primera visualización.
   scene.update();
+
+
+  
 });
