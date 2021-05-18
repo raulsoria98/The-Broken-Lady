@@ -194,7 +194,7 @@ class Lady extends THREE.Object3D {
 
         this.add(this.lady);
 
-        //Para controlar el tiempo de la animacion
+        //Para controlar el tiempo de la animacion de parpadeo
         this.tiempoAns = Date.now();
         this.tiempoAnterior = Date.now();
         this.cerrar = true;
@@ -207,8 +207,9 @@ class Lady extends THREE.Object3D {
 
         //Para controlar la animacion del salto
         this.preparando_salto = true;
-        this.saltar = true;
 
+        
+  
     }
 
     createGUI(gui, titleGui) {
@@ -235,18 +236,97 @@ class Lady extends THREE.Object3D {
         folder.add(this.guiControls, 'reset').name('[ Reset ]');
     }
 
-    //Funciones para el movimiento
-    abajo(){
+    atacar(){
+        //animacion de atacar
+    }
 
+    //Funciones para el movimiento
+    saltar(){
+        // var factor_escala_salto = 0.013;
+        // var factor_elevacion_salto = 0.1;
+        // var tiempoAnterior = Date.now();
+        // var tiempoActual;
+        // var seg;
+
+        // while(this.preparando_salto){
+        //     tiempoActual = Date.now();
+        //     seg = (tiempoActual - tiempoAnterior) / 1000;
+        //     console.log(seg);
+
+        //     if(this.piernaI.scale.y > 0.5){
+        //         this.piernaI.scale.y -= factor_escala_salto * seg;
+        //         this.piernaD.scale.y -= factor_escala_salto * seg;
+
+                
+        //         this.lady.position.y -= this.largoPierna * factor_escala_salto * seg;
+        //     }
+        //     else{
+        //         this.preparando_salto = false;
+        //     }
+
+
+        // }
+
+        // while(!this.preparando_salto){
+        //     if(this.piernaI.scale.y < 1){
+        //         this.piernaI.scale.y += factor_escala_salto;
+        //         this.piernaD.scale.y += factor_escala_salto;
+
+                 
+        //         this.lady.position.y += this.largoPierna * factor_escala_salto + factor_elevacion_salto;
+        //     }
+        //     else{
+        //         this.preparando_salto = true;
+
+        //     }
+        // }
+        
+   
     }
 
     derecha(){
         this.position.x += 1;
+        this.rotation.y = Math.PI/2;
+        
+        // var tiempoAnterior = Date.now();
+        // var tiempoActual;
+        // var seg;
+
+        // while(this.piernaD.rotation.x > this.paso_tope && this.pierna_d_mov ){
+        //     if(this.piernaD.rotation.x > this.paso_tope && this.pierna_d_mov){ 
+        //         tiempoActual = Date.now();
+        //         seg = (tiempoActual - tiempoAnterior) / 1000;
+
+        //         this.piernaD.rotation.x-=0.001*seg;
+        //         this.piernaI.rotation.x+= 0.001*seg;
+        //     }
+        //     else
+        //         this.pierna_d_mov = false;
+        // }
+
+        // while(!this.pierna_d_mov){
+        //     if(!this.pierna_d_mov){
+        //         tiempoActual = Date.now();
+        //         seg = (tiempoActual - tiempoAnterior) / 1000;
+
+        //         if( this.piernaI.rotation.x > this.paso_tope){
+        //             this.lady.position.z += 0.001;
+        //             this.piernaI.rotation.x -= 0.001*seg;
+        //             this.piernaD.rotation.x += 0.001*seg;
+        //         }
+        //         else
+        //             this.pierna_d_mov = true;
+
+        //     }
+        // }
     }
 
     izquierda(){
         this.position.x -= 1;
+        this.rotation.y = -Math.PI/2;
     }
+
+
 
     update() {
 
@@ -269,38 +349,12 @@ class Lady extends THREE.Object3D {
 
         }*/
 
-        var factor_escala_salto = 0.013;
-        var factor_elevacion_salto = 0.1;
+
  
         //Animacion salto
-        if(this.saltar){
-        if(this.preparando_salto){
-            if(this.piernaI.scale.y > 0.5){
-                this.piernaI.scale.y -= factor_escala_salto;
-                this.piernaD.scale.y -= factor_escala_salto;
+        // if(this.saltar){
 
-                
-                this.lady.position.y -= this.largoPierna * factor_escala_salto;
-            }
-            else{
-                this.preparando_salto = false;
-            }
-        }
-
-        if(!this.preparando_salto){
-            if(this.piernaI.scale.y < 1){
-                this.piernaI.scale.y += factor_escala_salto;
-                this.piernaD.scale.y += factor_escala_salto;
-
-                 
-                this.lady.position.y += this.largoPierna * factor_escala_salto + factor_elevacion_salto;
-            }
-            else{
-                this.preparando_salto = true;
-                this.saltar = false;
-            }
-        }
-        }
+        // }
 
         
         //Animacion ojos

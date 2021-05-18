@@ -9,6 +9,8 @@ import * as TWEEN from '../libs/tween.esm.js'
 // Clases de mi proyecto
 
 import { Lady } from './Lady.js'
+import { Mapa } from './Mapa.js'
+import { Cucaracha } from './Cucaracha.js'
 
 /// La clase fachada del modelo
 /**
@@ -47,6 +49,12 @@ class MyScene extends THREE.Scene {
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
     this.lady = new Lady(this.gui, "Cilindro: ");
     this.add(this.lady);
+
+    this.mapa = new Mapa();
+    this.add(this.mapa);
+
+    // this.cucaracha = new Cucaracha();
+    // this.add(this.cucaracha);
   }
 
   createCamera() {
@@ -207,7 +215,6 @@ class MyScene extends THREE.Scene {
   pulsarTecla(tecla) {
     switch (tecla.key) {
       case 'a':
-        console.log(this.lady);
         this.lady.izquierda();
         break;
       
@@ -218,7 +225,13 @@ class MyScene extends THREE.Scene {
   
       case ' ':
         console.log("saltar");
-    
+        this.lady.saltar();
+        break;
+      
+      case 'q':
+          this.lady.atacar();
+          break;
+
       default:
         break;
     }
@@ -234,7 +247,7 @@ $(function () {
 
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener("resize", () => scene.onWindowResize());
-  window.addEventListener('keydown', scene.pulsarTecla);
+  window.addEventListener('keydown', (tecla)=>scene.pulsarTecla(tecla));
  
   // Que no se nos olvide, la primera visualización.
   scene.update();
