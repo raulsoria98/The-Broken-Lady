@@ -50,8 +50,8 @@ class MyScene extends THREE.Scene {
     this.lady = new Lady(this.gui, "Cilindro: ");
     this.add(this.lady);
 
-    this.mapa = new Mapa();
-    this.add(this.mapa);
+    //this.mapa = new Mapa();
+    //this.add(this.mapa);
 
     // this.cucaracha = new Cucaracha();
     // this.add(this.cucaracha);
@@ -229,6 +229,7 @@ class MyScene extends THREE.Scene {
         break;
       
       case 'q':
+          console.log("atacar");
           this.lady.atacar();
           break;
 

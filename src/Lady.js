@@ -1,4 +1,5 @@
 import * as THREE from '../libs/three.module.js'
+import * as TWEEN from '../libs/tween.esm.js'
 import { ThreeBSP } from '../libs/ThreeBSP.js'
 
 function degToRad(deg) {
@@ -208,6 +209,21 @@ class Lady extends THREE.Object3D {
         //Para controlar la animacion del salto
         this.preparando_salto = true;
 
+        //TWEEN ATAQUE
+        var origen_ataque = { rot_brazo: 0, rot_arma: 90, rot_palante: 0 }
+        var fin_ataque = { rot_brazo: -60, rot_arma: 110, rot_palante: 45 }
+
+        var that = this;
+        this.movimiento_ataque = new TWEEN.Tween(origen_ataque)
+            .to(fin_ataque, 200)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate( () => {
+                that.brazoD.rotation.y = degToRad(origen_ataque.rot_brazo);
+                that.arma.rotation.y = degToRad(origen_ataque.rot_arma);
+                that.arma.rotation.x = degToRad(origen_ataque.rot_palante);
+            })
+            .yoyo(true).repeat(1)
+        
         
   
     }
@@ -237,7 +253,8 @@ class Lady extends THREE.Object3D {
     }
 
     atacar(){
-        //animacion de atacar
+        this.movimiento_ataque.start();
+        
     }
 
     //Funciones para el movimiento
@@ -284,51 +301,99 @@ class Lady extends THREE.Object3D {
    
     }
 
+    // FIXME: Arreglar para que se pueda mantener pulsada la tecla de andar
     derecha(){
-        this.position.x += 1;
         this.rotation.y = Math.PI/2;
+        var that = this
+        //TWEEN ANDAR
+        var origen0 = { rot_piernaD: 0 }
+        var fin0 = { rot_piernaD: -35 }
         
-        // var tiempoAnterior = Date.now();
-        // var tiempoActual;
-        // var seg;
+        var movimiento0 = new TWEEN.Tween(origen0)
+            .to(fin0, 100)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate( () => {
+                that.piernaI.rotation.x = degToRad(origen0.rot_piernaD);
+            })
+        
+        var origen1 = { pos: this.position.x, rot_piernaI: 0 }
+        var fin1 = { pos: this.position.x + 1, rot_piernaI: 35 }
+        
+        var movimiento1 = new TWEEN.Tween(origen1)
+            .to(fin1, 100)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate( () => {
+                that.position.x = origen1.pos;
+                that.piernaD.rotation.x = degToRad(origen1.rot_piernaI);
+            })
 
-        // while(this.piernaD.rotation.x > this.paso_tope && this.pierna_d_mov ){
-        //     if(this.piernaD.rotation.x > this.paso_tope && this.pierna_d_mov){ 
-        //         tiempoActual = Date.now();
-        //         seg = (tiempoActual - tiempoAnterior) / 1000;
+        var origen2 = { pos: this.position.x + 1, rot_piernaI: 35, rot_piernaD: -35 }
+        var fin2 = { pos: this.position.x + 2, rot_piernaI: 0, rot_piernaD: 0 }
 
-        //         this.piernaD.rotation.x-=0.001*seg;
-        //         this.piernaI.rotation.x+= 0.001*seg;
-        //     }
-        //     else
-        //         this.pierna_d_mov = false;
-        // }
+        var movimiento2 = new TWEEN.Tween(origen2)
+            .to(fin2, 100)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate( () => {
+                that.position.x = origen2.pos;
+                that.piernaD.rotation.x = degToRad(origen2.rot_piernaI);
+                that.piernaI.rotation.x = degToRad(origen2.rot_piernaD);
+            })
+        
+        movimiento0.chain(movimiento1);
+        movimiento1.chain(movimiento2);
+        
 
-        // while(!this.pierna_d_mov){
-        //     if(!this.pierna_d_mov){
-        //         tiempoActual = Date.now();
-        //         seg = (tiempoActual - tiempoAnterior) / 1000;
-
-        //         if( this.piernaI.rotation.x > this.paso_tope){
-        //             this.lady.position.z += 0.001;
-        //             this.piernaI.rotation.x -= 0.001*seg;
-        //             this.piernaD.rotation.x += 0.001*seg;
-        //         }
-        //         else
-        //             this.pierna_d_mov = true;
-
-        //     }
-        // }
+        movimiento0.start();
     }
 
     izquierda(){
-        this.position.x -= 1;
         this.rotation.y = -Math.PI/2;
+        var that = this
+        //TWEEN ANDAR
+        var origen0 = { rot_piernaD: 0 }
+        var fin0 = { rot_piernaD: -35 }
+        
+        var movimiento0 = new TWEEN.Tween(origen0)
+            .to(fin0, 100)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate( () => {
+                that.piernaI.rotation.x = degToRad(origen0.rot_piernaD);
+            })
+        
+        var origen1 = { pos: this.position.x, rot_piernaI: 0 }
+        var fin1 = { pos: this.position.x - 1, rot_piernaI: 35 }
+        
+        var movimiento1 = new TWEEN.Tween(origen1)
+            .to(fin1, 100)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate( () => {
+                that.position.x = origen1.pos;
+                that.piernaD.rotation.x = degToRad(origen1.rot_piernaI);
+            })
+
+        var origen2 = { pos: this.position.x - 1, rot_piernaI: 35, rot_piernaD: -35 }
+        var fin2 = { pos: this.position.x - 2, rot_piernaI: 0, rot_piernaD: 0 }
+
+        var movimiento2 = new TWEEN.Tween(origen2)
+            .to(fin2, 100)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate( () => {
+                that.position.x = origen2.pos;
+                that.piernaD.rotation.x = degToRad(origen2.rot_piernaI);
+                that.piernaI.rotation.x = degToRad(origen2.rot_piernaD);
+            })
+        
+        movimiento0.chain(movimiento1);
+        movimiento1.chain(movimiento2);
+        
+
+        movimiento0.start();
     }
 
 
 
     update() {
+        TWEEN.update();
 
         //Animacion pasos
         /**if(this.piernaD.rotation.x > this.paso_tope && this.pierna_d_mov){ 
