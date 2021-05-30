@@ -26,22 +26,22 @@ class Lady extends THREE.Object3D {
 		this.craneo.scale.z = 0.9;
 
 		//Ojos
-		this.ojoD = new THREE.Mesh(geomOvalo, materialOjitos);
-		this.ojoD.scale.y = 1.2 * 0.4;
-		this.ojoD.scale.x = 1.1 * 0.3;
-		this.ojoD.scale.z = 0.9 * 0.2;
-		this.ojoD.rotation.y = 0.4;
-		this.ojoD.rotation.x = -0.4;
-		this.ojoD.position.set(0.4, 0.4, 0.65);
-
-
 		this.ojoI = new THREE.Mesh(geomOvalo, materialOjitos);
 		this.ojoI.scale.y = 1.2 * 0.4;
 		this.ojoI.scale.x = 1.1 * 0.3;
 		this.ojoI.scale.z = 0.9 * 0.2;
-		this.ojoI.rotation.y = -0.4;
+		this.ojoI.rotation.y = 0.4;
 		this.ojoI.rotation.x = -0.4;
-		this.ojoI.position.set(-0.4, 0.4, 0.65);
+		this.ojoI.position.set(0.4, 0.4, 0.65);
+
+
+		this.ojoD = new THREE.Mesh(geomOvalo, materialOjitos);
+		this.ojoD.scale.y = 1.2 * 0.4;
+		this.ojoD.scale.x = 1.1 * 0.3;
+		this.ojoD.scale.z = 0.9 * 0.2;
+		this.ojoD.rotation.y = -0.4;
+		this.ojoD.rotation.x = -0.4;
+		this.ojoD.position.set(-0.4, 0.4, 0.65);
 
 		//Mofletes
 		this.mofleteD = new THREE.Mesh(geomOvalo, materialMofletes);
@@ -74,17 +74,17 @@ class Lady extends THREE.Object3D {
 		//Geometria y creacion de las mallas de lo cuernos
 		var cuernoGeom = new THREE.ConeBufferGeometry(0.2, 0.5, 30, 30);
 
-		this.cuernoI = new THREE.Mesh(cuernoGeom, materialCuernos);
-		this.cuernoI.position.set(-this.ancho_cuernos, this.altura_cuernos, 0);
-		this.cuernoI.rotation.z = degToRad(40);
-
 		this.cuernoD = new THREE.Mesh(cuernoGeom, materialCuernos);
-		this.cuernoD.position.set(this.ancho_cuernos, this.altura_cuernos, 0);
-		this.cuernoD.rotation.z = degToRad(-40);
+		this.cuernoD.position.set(-this.ancho_cuernos, this.altura_cuernos, 0);
+		this.cuernoD.rotation.z = degToRad(40);
+
+		this.cuernoI = new THREE.Mesh(cuernoGeom, materialCuernos);
+		this.cuernoI.position.set(this.ancho_cuernos, this.altura_cuernos, 0);
+		this.cuernoI.rotation.z = degToRad(-40);
 
 
 		this.cabeza = new THREE.Object3D();
-		this.cabeza.add(this.craneo, this.ojoD, this.ojoI, this.mofleteD, this.mofleteI, this.cuernoD, this.cuernoI);
+		this.cabeza.add(this.craneo, this.ojoI, this.ojoD, this.mofleteD, this.mofleteI, this.cuernoI, this.cuernoD);
 		this.cabeza.position.y = 1;
 
 		// TODO: ¿Cómo podemos hacer una capa?
@@ -119,22 +119,22 @@ class Lady extends THREE.Object3D {
 		var manoGeom = new THREE.SphereBufferGeometry(0.2, 30, 30);
 
 		//Brazo Derecho
-		this.brazoDM = new THREE.Mesh(brazoGeom, materialCuerpo);
-		this.brazoDM.rotation.z = -Math.PI / 2;
-		this.brazoDM.position.x = brazoGeom.parameters.height / 2 + hombroGeom.parameters.radius - 0.1;
-		this.hombroDM = new THREE.Mesh(hombroGeom, materialCuerpo);
-		this.hombroDM.add(this.brazoDM);
-		this.manoDM = new THREE.Mesh(manoGeom, materialCuerpo);
-		this.manoDM.position.x = manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2;
-
-		//Brazo Izquierdo
 		this.brazoIM = new THREE.Mesh(brazoGeom, materialCuerpo);
-		this.brazoIM.rotation.z = Math.PI / 2;
-		this.brazoIM.position.x = - (brazoGeom.parameters.height / 2 + hombroGeom.parameters.radius - 0.1);
+		this.brazoIM.rotation.z = -Math.PI / 2;
+		this.brazoIM.position.x = brazoGeom.parameters.height / 2 + hombroGeom.parameters.radius - 0.1;
 		this.hombroIM = new THREE.Mesh(hombroGeom, materialCuerpo);
 		this.hombroIM.add(this.brazoIM);
 		this.manoIM = new THREE.Mesh(manoGeom, materialCuerpo);
-		this.manoIM.position.x = -(manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2);
+		this.manoIM.position.x = manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2;
+
+		//Brazo Izquierdo
+		this.brazoDM = new THREE.Mesh(brazoGeom, materialCuerpo);
+		this.brazoDM.rotation.z = Math.PI / 2;
+		this.brazoDM.position.x = - (brazoGeom.parameters.height / 2 + hombroGeom.parameters.radius - 0.1);
+		this.hombroDM = new THREE.Mesh(hombroGeom, materialCuerpo);
+		this.hombroDM.add(this.brazoDM);
+		this.manoDM = new THREE.Mesh(manoGeom, materialCuerpo);
+		this.manoDM.position.x = -(manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2);
 
 		// Arma
 		var geomMango = new THREE.CylinderBufferGeometry(0.15, 0.15, 2, 30, 30);
@@ -148,24 +148,24 @@ class Lady extends THREE.Object3D {
 		this.arma = new THREE.Object3D();
 		this.arma.add(this.mango, this.mazo);
 		this.arma.rotation.y += degToRad(90);
-		this.arma.position.x += this.brazoIM.geometry.parameters.height + this.hombroIM.geometry.parameters.radius;
+		this.arma.position.x += this.brazoDM.geometry.parameters.height + this.hombroDM.geometry.parameters.radius;
 
 		//Nodo brazos Izq
 		var altura_brazos = 1.85;
 		var separacion_brazos = 0.4;
 
-		this.brazoI = new THREE.Object3D();
-		this.brazoI.add(this.hombroIM, this.manoIM);
-		this.brazoI.position.y = altura_brazos;
-		this.brazoI.position.x = -separacion_brazos;
-		this.brazoI.rotation.z = degToRad(40);
+		this.brazoD = new THREE.Object3D();
+		this.brazoD.add(this.hombroDM, this.manoDM);
+		this.brazoD.position.y = altura_brazos;
+		this.brazoD.position.x = -separacion_brazos;
+		this.brazoD.rotation.z = degToRad(40);
 
 		//Nodo brazos Dcho
-		this.brazoD = new THREE.Object3D();
-		this.brazoD.add(this.hombroDM, this.manoDM, this.arma);
-		this.brazoD.position.y = altura_brazos;
-		this.brazoD.position.x = separacion_brazos;
-		this.brazoD.rotation.z = degToRad(-40);
+		this.brazoI = new THREE.Object3D();
+		this.brazoI.add(this.hombroIM, this.manoIM, this.arma);
+		this.brazoI.position.y = altura_brazos;
+		this.brazoI.position.x = separacion_brazos;
+		this.brazoI.rotation.z = degToRad(-40);
 
 
 		//Piernas
@@ -173,24 +173,24 @@ class Lady extends THREE.Object3D {
 		var piernaGeom = new THREE.ConeBufferGeometry(0.4, this.largoPierna, 30, 5);
 		var ingleGeom = new THREE.SphereBufferGeometry(0.3, 30, 30);
 
-		this.piernaIM = new THREE.Mesh(piernaGeom, materialCuerpo);
-		this.piernaI = new THREE.Mesh(ingleGeom, materialCuerpo);
-		this.piernaI.add(this.piernaIM);
-		this.piernaIM.rotation.z = Math.PI;
-		this.piernaIM.position.y = -(piernaGeom.parameters.height / 2);
-
 		this.piernaDM = new THREE.Mesh(piernaGeom, materialCuerpo);
 		this.piernaD = new THREE.Mesh(ingleGeom, materialCuerpo);
 		this.piernaD.add(this.piernaDM);
 		this.piernaDM.rotation.z = Math.PI;
 		this.piernaDM.position.y = -(piernaGeom.parameters.height / 2);
 
+		this.piernaIM = new THREE.Mesh(piernaGeom, materialCuerpo);
+		this.piernaI = new THREE.Mesh(ingleGeom, materialCuerpo);
+		this.piernaI.add(this.piernaIM);
+		this.piernaIM.rotation.z = Math.PI;
+		this.piernaIM.position.y = -(piernaGeom.parameters.height / 2);
+
 		//Nodo-brazo-izq - espada
-		this.piernaD.position.x = 0.4;
-		this.piernaI.position.x = -0.4;
+		this.piernaI.position.x = 0.4;
+		this.piernaD.position.x = -0.4;
 
 		this.lady = new THREE.Object3D();
-		this.lady.add(this.cuerpo, this.brazoD, this.brazoI, this.piernaD, this.piernaI);
+		this.lady.add(this.cuerpo, this.brazoI, this.brazoD, this.piernaI, this.piernaD);
 		this.lady.position.y = piernaGeom.parameters.height;
 
 		this.add(this.lady);
@@ -218,7 +218,7 @@ class Lady extends THREE.Object3D {
 			.to(fin_ataque, 200)
 			.easing(TWEEN.Easing.Quadratic.InOut)
 			.onUpdate(() => {
-				that.brazoD.rotation.y = degToRad(origen_ataque.rot_brazo);
+				that.brazoI.rotation.y = degToRad(origen_ataque.rot_brazo);
 				that.arma.rotation.y = degToRad(origen_ataque.rot_arma);
 				that.arma.rotation.x = degToRad(origen_ataque.rot_palante);
 			})
@@ -271,9 +271,9 @@ class Lady extends THREE.Object3D {
 		//     seg = (tiempoActual - tiempoAnterior) / 1000;
 		//     console.log(seg);
 
-		//     if(this.piernaI.scale.y > 0.5){
-		//         this.piernaI.scale.y -= factor_escala_salto * seg;
+		//     if(this.piernaD.scale.y > 0.5){
 		//         this.piernaD.scale.y -= factor_escala_salto * seg;
+		//         this.piernaI.scale.y -= factor_escala_salto * seg;
 
 
 		//         this.lady.position.y -= this.largoPierna * factor_escala_salto * seg;
@@ -286,9 +286,9 @@ class Lady extends THREE.Object3D {
 		// }
 
 		// while(!this.preparando_salto){
-		//     if(this.piernaI.scale.y < 1){
-		//         this.piernaI.scale.y += factor_escala_salto;
+		//     if(this.piernaD.scale.y < 1){
 		//         this.piernaD.scale.y += factor_escala_salto;
+		//         this.piernaI.scale.y += factor_escala_salto;
 
 
 		//         this.lady.position.y += this.largoPierna * factor_escala_salto + factor_elevacion_salto;
@@ -315,7 +315,7 @@ class Lady extends THREE.Object3D {
 				.to(fin0, 100)
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
-					that.piernaI.rotation.x = degToRad(origen0.rot_piernaD);
+					that.piernaD.rotation.x = degToRad(origen0.rot_piernaD);
 				})
 
 			var origen1 = {pos: this.position.x, rot_piernaI: 0}
@@ -326,7 +326,7 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen1.pos;
-					that.piernaD.rotation.x = degToRad(origen1.rot_piernaI);
+					that.piernaI.rotation.x = degToRad(origen1.rot_piernaI);
 				})
 
 			var origen2 = {pos: this.position.x + 1, rot_piernaI: 35, rot_piernaD: -35}
@@ -337,8 +337,8 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen2.pos;
-					that.piernaD.rotation.x = degToRad(origen2.rot_piernaI);
-					that.piernaI.rotation.x = degToRad(origen2.rot_piernaD);
+					that.piernaI.rotation.x = degToRad(origen2.rot_piernaI);
+					that.piernaD.rotation.x = degToRad(origen2.rot_piernaD);
 				})
 
 			movimiento0.chain(movimiento1);
@@ -355,7 +355,7 @@ class Lady extends THREE.Object3D {
 				.to(fin0, 100)
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
-					that.piernaD.rotation.x = degToRad(origen0.rot_piernaI);
+					that.piernaI.rotation.x = degToRad(origen0.rot_piernaI);
 				})
 
 			var origen1 = {pos: this.position.x, rot_piernaD: 0}
@@ -366,7 +366,7 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen1.pos;
-					that.piernaI.rotation.x = degToRad(origen1.rot_piernaD);
+					that.piernaD.rotation.x = degToRad(origen1.rot_piernaD);
 				})
 
 			var origen2 = {pos: this.position.x + 1, rot_piernaD: 35, rot_piernaI: -35}
@@ -377,8 +377,8 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen2.pos;
-					that.piernaI.rotation.x = degToRad(origen2.rot_piernaD);
-					that.piernaD.rotation.x = degToRad(origen2.rot_piernaI);
+					that.piernaD.rotation.x = degToRad(origen2.rot_piernaD);
+					that.piernaI.rotation.x = degToRad(origen2.rot_piernaI);
 				})
 
 			movimiento0.chain(movimiento1);
@@ -402,7 +402,7 @@ class Lady extends THREE.Object3D {
 				.to(fin0, 100)
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
-					that.piernaI.rotation.x = degToRad(origen0.rot_piernaD);
+					that.piernaD.rotation.x = degToRad(origen0.rot_piernaD);
 				})
 
 			var origen1 = {pos: this.position.x, rot_piernaI: 0}
@@ -413,7 +413,7 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen1.pos;
-					that.piernaD.rotation.x = degToRad(origen1.rot_piernaI);
+					that.piernaI.rotation.x = degToRad(origen1.rot_piernaI);
 				})
 
 			var origen2 = {pos: this.position.x - 1, rot_piernaI: 35, rot_piernaD: -35}
@@ -424,8 +424,8 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen2.pos;
-					that.piernaD.rotation.x = degToRad(origen2.rot_piernaI);
-					that.piernaI.rotation.x = degToRad(origen2.rot_piernaD);
+					that.piernaI.rotation.x = degToRad(origen2.rot_piernaI);
+					that.piernaD.rotation.x = degToRad(origen2.rot_piernaD);
 				})
 
 			movimiento0.chain(movimiento1);
@@ -442,7 +442,7 @@ class Lady extends THREE.Object3D {
 				.to(fin0, 100)
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
-					that.piernaD.rotation.x = degToRad(origen0.rot_piernaI);
+					that.piernaI.rotation.x = degToRad(origen0.rot_piernaI);
 				})
 
 			var origen1 = {pos: this.position.x, rot_piernaD: 0}
@@ -453,7 +453,7 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen1.pos;
-					that.piernaI.rotation.x = degToRad(origen1.rot_piernaD);
+					that.piernaD.rotation.x = degToRad(origen1.rot_piernaD);
 				})
 
 			var origen2 = {pos: this.position.x - 1, rot_piernaD: 35, rot_piernaI: -35}
@@ -464,8 +464,8 @@ class Lady extends THREE.Object3D {
 				.easing(TWEEN.Easing.Quadratic.InOut)
 				.onUpdate(() => {
 					that.position.x = origen2.pos;
-					that.piernaI.rotation.x = degToRad(origen2.rot_piernaD);
-					that.piernaD.rotation.x = degToRad(origen2.rot_piernaI);
+					that.piernaD.rotation.x = degToRad(origen2.rot_piernaD);
+					that.piernaI.rotation.x = degToRad(origen2.rot_piernaI);
 				})
 
 			movimiento0.chain(movimiento1);
@@ -483,18 +483,18 @@ class Lady extends THREE.Object3D {
 		TWEEN.update();
 
 		//Animacion pasos
-		/**if(this.piernaD.rotation.x > this.paso_tope && this.pierna_d_mov){ 
-			this.piernaD.rotation.x-=0.001;
-			this.piernaI.rotation.x+= 0.001;
+		/**if(this.piernaI.rotation.x > this.paso_tope && this.pierna_d_mov){ 
+			this.piernaI.rotation.x-=0.001;
+			this.piernaD.rotation.x+= 0.001;
 		}
 		else
 			this.pierna_d_mov = false;
 
 		if(!this.pierna_d_mov){
-			if( this.piernaI.rotation.x > this.paso_tope){
+			if( this.piernaD.rotation.x > this.paso_tope){
 				this.lady.position.z += 0.001;
-				this.piernaI.rotation.x -= 0.001;
-				this.piernaD.rotation.x += 0.001;
+				this.piernaD.rotation.x -= 0.001;
+				this.piernaI.rotation.x += 0.001;
 			}
 			else
 				this.pierna_d_mov = true;
@@ -524,17 +524,17 @@ class Lady extends THREE.Object3D {
 
 		if (this.parpadeo) {
 			if (this.cerrar) {
-				this.ojoD.scale.y -= 2.5 * seg;
 				this.ojoI.scale.y -= 2.5 * seg;
+				this.ojoD.scale.y -= 2.5 * seg;
 
-				if (this.ojoD.scale.y <= 0.01)
+				if (this.ojoI.scale.y <= 0.01)
 					this.cerrar = false;
 			}
 			else {
-				this.ojoD.scale.y += 2.5 * seg;
 				this.ojoI.scale.y += 2.5 * seg;
+				this.ojoD.scale.y += 2.5 * seg;
 
-				if (this.ojoD.scale.y >= 1.2 * 0.4) {
+				if (this.ojoI.scale.y >= 1.2 * 0.4) {
 					this.cerrar = true;
 					this.parpadeo = false;
 					this.tiempoAnterior = tiempoActual;
@@ -568,8 +568,8 @@ class Lady extends THREE.Object3D {
 				this.subir = true;
 		}
 
-		this.cuernoI.position.set(-this.ancho_cuernos, this.altura_cuernos, 0);
-		this.cuernoD.position.set(this.ancho_cuernos, this.altura_cuernos, 0);
+		this.cuernoD.position.set(-this.ancho_cuernos, this.altura_cuernos, 0);
+		this.cuernoI.position.set(this.ancho_cuernos, this.altura_cuernos, 0);
 
 	}
 
