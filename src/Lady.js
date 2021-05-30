@@ -201,13 +201,8 @@ class Lady extends THREE.Object3D {
 		this.cerrar = true;
 		this.parpadeo = false;
 
-
-		//Para controlar la animacion de las piernas
-		this.pierna_d_mov = true;
-		this.paso_tope = -0.5;
-
-		//Para controlar la animacion del salto
-		this.preparando_salto = true;
+		// Controlar qué pierna mueve al andar
+		this.ultimo_paso = "izquierda";
 
 		//TWEEN ATAQUE
 		var origen_ataque = {rot_brazo: 0, rot_arma: 90, rot_palante: 0}
@@ -223,9 +218,6 @@ class Lady extends THREE.Object3D {
 				that.arma.rotation.x = degToRad(origen_ataque.rot_palante);
 			})
 			.yoyo(true).repeat(1)
-
-		// Controlar qué pierna mueve al andar
-		this.ultimo_paso = "izquierda";
 
 	}
 
@@ -260,6 +252,37 @@ class Lady extends THREE.Object3D {
 
 	//Funciones para el movimiento
 	saltar() {
+		//TWEEN SALTO
+		var that = this;
+		var escalado = 0.4;
+
+		var origen1 = {escala_piernas: 1, pos: this.position.y};
+		var fin1 = {escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado)};
+
+		var movimiento1 = new TWEEN.Tween(origen1)
+			.to(fin1, 200)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaI.scale.y = origen1.escala_piernas;
+				that.piernaD.scale.y = origen1.escala_piernas;
+				that.position.y = origen1.pos;
+			})
+
+		var origen2 = {escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado)};
+		var fin2 = {escala_piernas: 1, pos: this.position.y + 4};
+
+		var movimiento2 = new TWEEN.Tween(origen2)
+			.to(fin2, 200)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaI.scale.y = origen2.escala_piernas;
+				that.piernaD.scale.y = origen2.escala_piernas;
+				that.position.y = origen2.pos;
+			})
+
+		movimiento1.chain(movimiento2);
+
+		movimiento1.start();
 		// var factor_escala_salto = 0.013;
 		// var factor_elevacion_salto = 0.1;
 		// var tiempoAnterior = Date.now();
