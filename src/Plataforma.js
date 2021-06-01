@@ -8,7 +8,7 @@ class Plataforma extends THREE.Object3D{
         var materialAbajo = new THREE.MeshPhongMaterial({ map: texturaAbajo });
         var texturaArriba = new THREE.TextureLoader().load('../img/hierba-verde.png');
         var materialArriba = new THREE.MeshPhongMaterial({ map: texturaArriba });
-
+        this.largo = largo;
         var geomArriba = new THREE.BoxBufferGeometry(largo, alto/2, 10);
         var geomAbajo = new THREE.BoxBufferGeometry(largo - 1, alto/2, 9);
         geomAbajo.translate(0, geomAbajo.parameters.height / 2, 0);
@@ -26,6 +26,10 @@ class Plataforma extends THREE.Object3D{
     modificarPosicion(x, y) {
         this.position.x = x;
         this.position.y = y;
+    }
+
+    ancho(){
+        return this.largo;
     }
 }
 

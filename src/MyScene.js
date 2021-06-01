@@ -34,10 +34,10 @@ class MyScene extends THREE.Scene {
     this.createLights();
 
     // Tendremos una cámara con un control de movimiento con el ratón
-    this.createCamera();
+
 
     // Un suelo 
-    // this.createGround ();
+    this.createGround ();
 
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     this.axis = new THREE.AxesHelper(5);
@@ -50,11 +50,23 @@ class MyScene extends THREE.Scene {
     this.lady = new Lady(this.gui, "Cilindro: ");
     this.add(this.lady);
 
-    //this.mapa = new Mapa();
-    //this.add(this.mapa);
+    this.mapa = new Mapa();
+    this.add(this.mapa);
 
-    // this.cucaracha = new Cucaracha();
-    // this.add(this.cucaracha);
+    this.cucaracha = new Cucaracha();
+    this.add(this.cucaracha);
+
+    //Para la camara
+    this.nuevoTarget = this.lady.position.clone()
+
+    //Posiciones iniciales de la camara
+        
+    this.posx = 0;
+    this.posy = 4;
+    this.posz = 25;
+    
+    this.createCamera();
+
   }
 
   createCamera() {
@@ -62,32 +74,34 @@ class MyScene extends THREE.Scene {
     //   El ángulo del campo de visión en grados sexagesimales
     //   La razón de aspecto ancho/alto
     //   Los planos de recorte cercano y lejano
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
     // También se indica dónde se coloca
-    this.camera.position.set(0, 10, 25);
+    this.camera.position.set(this.posx, this.posy, this.posz);
     // Y hacia dónde mira
-    var look = new THREE.Vector3(0, 0, 0);
-    this.camera.lookAt(look);
-    this.add(this.camera);
+     var look = new THREE.Vector3(0, 0, 0);
+     this.camera.lookAt(look);
+     // this.camera.lookAt(this.nuevoTarget);
+     this.add(this.camera);
 
     // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
-    this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
-    // Se configuran las velocidades de los movimientos
-    this.cameraControl.rotateSpeed = 5;
-    this.cameraControl.zoomSpeed = -2;
-    this.cameraControl.panSpeed = 0.5;
-    // Debe orbitar con respecto al punto de mira de la cámara
-    this.cameraControl.target = look;
+     this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
+     // Se configuran las velocidades de los movimientos
+     this.cameraControl.rotateSpeed = 5;
+     this.cameraControl.zoomSpeed = -2;
+     this.cameraControl.panSpeed = 0.5;
+     // Debe orbitar con respecto al punto de mira de la cámara
+     this.cameraControl.target = look;
   }
 
   createGround() {
     // El suelo es un Mesh, necesita una geometría y un material.
 
     // La geometría es una caja con muy poca altura
-    var geometryGround = new THREE.BoxGeometry(50, 0.2, 50);
+    var geometryGround = new THREE.BoxGeometry(200, 0.2, 50);
+  
 
     // El material se hará con una textura de madera
-    var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
+    var texture = new THREE.TextureLoader().load('../img/water.jpg');
     var materialGround = new THREE.MeshPhongMaterial({ map: texture });
 
     // Ya se puede construir el Mesh
@@ -95,7 +109,9 @@ class MyScene extends THREE.Scene {
 
     // Todas las figuras se crean centradas en el origen.
     // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
-    ground.position.y = -0.1;
+    ground.position.x = 75;
+    ground.position.y = -4;
+    ground.position.z = 20;
 
     // Que no se nos olvide añadirlo a la escena, que en este caso es  this
     this.add(ground);
@@ -141,7 +157,7 @@ class MyScene extends THREE.Scene {
     // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
     // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
     this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
-    this.spotLight.position.set(60, 60, 40);
+    this.spotLight.position.set(60, 60, 200);
     this.add(this.spotLight);
   }
 
@@ -200,6 +216,7 @@ class MyScene extends THREE.Scene {
     // Se actualiza el resto del modelo
     TWEEN.update();
     this.lady.update(this.guiControls.animacion);
+    this.cucaracha.update();
 
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render(this, this.getCamera());
@@ -216,13 +233,24 @@ class MyScene extends THREE.Scene {
     switch (tecla.key) {
       case 'a':
         this.lady.izquierda();
+        //this.posx+=2;
         break;
       
       case 'd':
         console.log("derecha");
         this.lady.derecha();
         break;
-  
+      
+      case 's':
+          console.log("mirame");
+          this.lady.mirame();
+          break;
+      
+      case 'w':
+          console.log("caer");
+          this.lady.caer();
+          break;
+
       case ' ':
         console.log("saltar");
         this.lady.saltar();
@@ -236,6 +264,12 @@ class MyScene extends THREE.Scene {
       default:
         break;
     }
+
+    //Actualizar la camara
+    //this.nuevoTarget = this.lady.position.clone();
+    //console.log(this.nuevoTarget);
+    //this.camera.lookAt(this.nuevoTarget);
+
   }
   
 }
@@ -248,7 +282,7 @@ $(function () {
 
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener("resize", () => scene.onWindowResize());
-  window.addEventListener('keydown', (tecla)=>scene.pulsarTecla(tecla));
+  window.addEventListener('keypress', (tecla)=>scene.pulsarTecla(tecla));
  
   // Que no se nos olvide, la primera visualización.
   scene.update();
