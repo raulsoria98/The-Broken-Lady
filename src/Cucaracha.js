@@ -1,7 +1,3 @@
-import * as THREE from '../libs/three.module.js'
-import * as TWEEN from '../libs/tween.esm.js'
-
-
 function degToRad(deg) {
 	return deg * (Math.PI / 180);
 }
@@ -14,7 +10,7 @@ class Cucaracha extends THREE.Object3D{
         var texturaCuerpo = new THREE.TextureLoader().load('../img/metalico.jpg');
         var materialCuerpo = new THREE.MeshPhongMaterial({ map: texturaCuerpo });
 
-        var geomCuerpo = new THREE.SphereBufferGeometry(2, 30, 30);
+        var geomCuerpo = new THREE.SphereGeometry(2, 30, 30);
         this.cucaracha = new THREE.Mesh(geomCuerpo, materialCuerpo);
     
 
@@ -25,11 +21,11 @@ class Cucaracha extends THREE.Object3D{
         
 
         //Cabeza
-        var geomCabeza = new THREE.SphereBufferGeometry(1.5, 30, 30);
+        var geomCabeza = new THREE.SphereGeometry(1.5, 30, 30);
         this.cabeza = new THREE.Mesh(geomCabeza, materialCuerpo);
         
         //Cuerno
-       var geomCuerno = new THREE.ConeBufferGeometry(0.3, 0.8);
+       var geomCuerno = new THREE.CylinderGeometry(0.001, 0.3, 0.8);
        var texturaCuerno = new THREE.TextureLoader().load('../img/cuerpo.jpeg');
        var materialCuerno = new THREE.MeshPhongMaterial({ map: texturaCuerno });
        
@@ -37,7 +33,7 @@ class Cucaracha extends THREE.Object3D{
        
         
         //Ojos
-        var geomOjo = new THREE.SphereBufferGeometry(0.5, 30, 30);
+        var geomOjo = new THREE.SphereGeometry(0.5, 30, 30);
         var materialOjitos = new THREE.MeshPhongMaterial({color: 0x000000, transparent: true, opacity: 0.7});
 
         this.ojoI = new THREE.Mesh(geomOjo, materialOjitos);
@@ -73,7 +69,7 @@ class Cucaracha extends THREE.Object3D{
 
         //Patas
         var numPatas = 6;
-        var geomPata = new THREE.CylinderBufferGeometry(0.2, 0.2, 0.8, 4, 30);
+        var geomPata = new THREE.CylinderGeometry(0.2, 0.2, 0.8, 4, 30);
         this.patas = [];
         
    
@@ -198,5 +194,3 @@ class Cucaracha extends THREE.Object3D{
         TWEEN.update();
     }
 }
-
-export { Cucaracha }

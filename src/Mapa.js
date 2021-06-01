@@ -1,7 +1,3 @@
-import * as THREE from '../libs/three.module.js'
-
-import { Plataforma } from './Plataforma.js'
-
 class Mapa extends THREE.Object3D{
     constructor(){
         super();
@@ -65,4 +61,3 @@ class Mapa extends THREE.Object3D{
     }
 }
 
-export { Mapa }

@@ -1,28 +1,22 @@
-
-// Clases de la biblioteca
-
-import * as THREE from '../libs/three.module.js'
-import { GUI } from '../libs/dat.gui.module.js'
-import { TrackballControls } from '../libs/TrackballControls.js'
-import * as TWEEN from '../libs/tween.esm.js'
-
-// Clases de mi proyecto
-
-import { Lady } from './Lady.js'
-import { Mapa } from './Mapa.js'
-import { Cucaracha } from './Cucaracha.js'
-
 /// La clase fachada del modelo
 /**
  * Usaremos una clase derivada de la clase Scene de Three.js para llevar el control de la escena y de todo lo que ocurre en ella.
  */
 
-class MyScene extends THREE.Scene {
+class MyScene extends Physijs.Scene {
   constructor(myCanvas) {
+    // El gestor de hebras
+    Physijs.scripts.worker = '../libs/physijs/physijs_worker.js';
+    // El motor de física de bajo nivel, en el cual se apoya Physijs
+    Physijs.scripts.ammo = '../physijs/ammo.js';
+
     super();
 
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
+
+    //Se establece el valor de la gravedad, negativo, los objetos caen hacia abajo
+    this.setGravity(new THREE.Vector3(0,-10,0));
 
     // Se añade a la gui los controles para manipular los elementos de esta clase
     this.gui = this.createGUI();
@@ -40,24 +34,27 @@ class MyScene extends THREE.Scene {
     this.createGround ();
 
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
-    this.axis = new THREE.AxesHelper(5);
-    this.add(this.axis);
+    // this.axis = new THREE.AxesHelper(5);
+    // this.add(this.axis);
 
 
     // Por último creamos el modelo.
     // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-    this.lady = new Lady(this.gui, "Cilindro: ");
-    this.add(this.lady);
+    this.lady = new Lady(this);
+    //this.add(this.lady);
 
-    this.mapa = new Mapa();
-    this.add(this.mapa);
+    //this.mapa = new Mapa();
+    //this.add(this.mapa);
+
+    // this.plataforma = new Plataforma(this, 10, 5);
+    //this.add(this.plataforma);
 
     this.cucaracha = new Cucaracha();
-    this.add(this.cucaracha);
+    // this.add(this.cucaracha);
 
     //Para la camara
-    this.nuevoTarget = this.lady.position.clone()
+    //this.nuevoTarget = this.lady.position.clone();
 
     //Posiciones iniciales de la camara
         
@@ -69,6 +66,7 @@ class MyScene extends THREE.Scene {
 
   }
 
+  // FIXME: TraceballControls no funciona
   createCamera() {
     // Para crear una cámara le indicamos
     //   El ángulo del campo de visión en grados sexagesimales
@@ -84,13 +82,13 @@ class MyScene extends THREE.Scene {
      this.add(this.camera);
 
     // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
-     this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
+    //  this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
      // Se configuran las velocidades de los movimientos
-     this.cameraControl.rotateSpeed = 5;
-     this.cameraControl.zoomSpeed = -2;
-     this.cameraControl.panSpeed = 0.5;
+     //this.cameraControl.rotateSpeed = 5;
+     //this.cameraControl.zoomSpeed = -2;
+     //this.cameraControl.panSpeed = 0.5;
      // Debe orbitar con respecto al punto de mira de la cámara
-     this.cameraControl.target = look;
+     //this.cameraControl.target = look;
   }
 
   createGround() {
@@ -104,8 +102,11 @@ class MyScene extends THREE.Scene {
     var texture = new THREE.TextureLoader().load('../img/water.jpg');
     var materialGround = new THREE.MeshPhongMaterial({ map: texture });
 
+    //Adaptado a physijs
+    var physiMaterial = Physijs.createMaterial(materialGround, 0.2, 0.1);
+
     // Ya se puede construir el Mesh
-    var ground = new THREE.Mesh(geometryGround, materialGround);
+    var ground = new Physijs.BoxMesh(geometryGround, physiMaterial, 0);
 
     // Todas las figuras se crean centradas en el origen.
     // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
@@ -119,7 +120,7 @@ class MyScene extends THREE.Scene {
 
   createGUI() {
     // Se crea la interfaz gráfica de usuario
-    var gui = new GUI({ width: 350 });
+    var gui = new dat.GUI();
 
     // La escena le va a añadir sus propios controles. 
     // Se definen mediante una   new function()
@@ -208,11 +209,14 @@ class MyScene extends THREE.Scene {
     this.spotLight.intensity = this.guiControls.lightIntensity;
 
     // Se muestran o no los ejes según lo que idique la GUI
-    this.axis.visible = this.guiControls.axisOnOff;
+    //this.axis.visible = this.guiControls.axisOnOff;
 
     // Se actualiza la posición de la cámara según su controlador
-    this.cameraControl.update();
+    //this.cameraControl.update();
 
+    //Para que funcione la fisica
+    this.simulate ();
+    
     // Se actualiza el resto del modelo
     TWEEN.update();
     this.lady.update(this.guiControls.animacion);
@@ -264,12 +268,6 @@ class MyScene extends THREE.Scene {
       default:
         break;
     }
-
-    //Actualizar la camara
-    //this.nuevoTarget = this.lady.position.clone();
-    //console.log(this.nuevoTarget);
-    //this.camera.lookAt(this.nuevoTarget);
-
   }
   
 }
