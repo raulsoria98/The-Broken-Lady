@@ -7,7 +7,7 @@ function degToRad(deg) {
 }
 
 class Cucaracha extends THREE.Object3D{
-    constructor(){
+    constructor(anchoPlataforma){
         super();
         
         //Cuerpo

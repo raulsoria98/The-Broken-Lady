@@ -7,8 +7,9 @@ function degToRad(deg) {
 }
 
 class Lady extends THREE.Object3D {
-	constructor() {
+	constructor(scene) {
 		super();
+		this.scene = scene;
 		//Cabeza - nodo
 		//Materiales
 		var texturaCuerpo = new THREE.TextureLoader().load('../img/cuerpo.jpeg');
@@ -218,83 +219,76 @@ class Lady extends THREE.Object3D {
 				that.brazoI.rotation.y = degToRad(origen_ataque.rot_brazo);
 				that.arma.rotation.y = degToRad(origen_ataque.rot_arma);
 				that.arma.rotation.x = degToRad(origen_ataque.rot_palante);
+				
 			})
 			.yoyo(true).repeat(1)
 
 		//TWEEN ANDAR
-		if (this.ultimo_paso == "izquierda") {
-			var origen0_andar = {rot_piernaD: 0}
-			var fin0_andar = {rot_piernaD: -35}
+		var origen0_andar = {rot_pierna0: 0}
+		var fin0_andar = {rot_pierna0: -35}
 
-			this.movimiento0_andar = new TWEEN.Tween(origen0_andar)
-				.to(fin0_andar, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onUpdate(() => {
-					that.piernaD.rotation.x = degToRad(origen0_andar.rot_piernaD);
-				})
+		var origen1_andar = {rot_pierna1: 0}
+		var fin1_andar = {rot_pierna1: 35}
 
-			var origen1_andar = {rot_piernaI: 0}
-			var fin1_andar = {rot_piernaI: 35}
+		var origen2_andar = {rot_pierna1: 35, rot_pierna0: -35}
+		var fin2_andar = {rot_pierna1: 0, rot_pierna0: 0}
 
-			this.movimiento1_andar = new TWEEN.Tween(origen1_andar)
-				.to(fin1_andar, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onUpdate(() => {
-					that.piernaI.rotation.x = degToRad(origen1_andar.rot_piernaI);
-				})
+		// Pierna Dcha Primero
+		this.movimiento0_andar_D = new TWEEN.Tween(origen0_andar)
+			.to(fin0_andar, 50)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaD.rotation.x = degToRad(origen0_andar.rot_pierna0);
+			})
 
-			var origen2_andar = {rot_piernaI: 35, rot_piernaD: -35}
-			var fin2_andar = {rot_piernaI: 0, rot_piernaD: 0}
+		this.movimiento1_andar_D = new TWEEN.Tween(origen1_andar)
+			.to(fin1_andar, 50)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaI.rotation.x = degToRad(origen1_andar.rot_pierna1);
+			})
 
-			this.movimiento2_andar = new TWEEN.Tween(origen2_andar)
-				.to(fin2_andar, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onUpdate(() => {
-					that.piernaI.rotation.x = degToRad(origen2_andar.rot_piernaI);
-					that.piernaD.rotation.x = degToRad(origen2_andar.rot_piernaD);
-				})
+		this.movimiento2_andar_D = new TWEEN.Tween(origen2_andar)
+			.to(fin2_andar, 50)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaI.rotation.x = degToRad(origen2_andar.rot_pierna1);
+				that.piernaD.rotation.x = degToRad(origen2_andar.rot_pierna0);
+			})
 
-			this.movimiento0_andar.chain(this.movimiento1_andar);
-			this.movimiento1_andar.chain(this.movimiento2_andar);
+		this.movimiento0_andar_D.chain(this.movimiento1_andar_D);
+		this.movimiento1_andar_D.chain(this.movimiento2_andar_D);
 
-			this.ultimo_paso = "derecha";
-		} else if (this.ultimo_paso == "derecha") {
-			var origen0_andar = {rot_piernaI: 0}
-			var fin0_andar = {rot_piernaI: -35}
+		// Pierna Izda Primero
+		this.movimiento0_andar_I = new TWEEN.Tween(origen0_andar)
+			.to(fin0_andar, 50)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaI.rotation.x = degToRad(origen0_andar.rot_pierna0);
+			})
 
-			this.movimiento0_andar = new TWEEN.Tween(origen0_andar)
-				.to(fin0_andar, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onUpdate(() => {
-					that.piernaI.rotation.x = degToRad(origen0_andar.rot_piernaI);
-				})
+		this.movimiento1_andar_I = new TWEEN.Tween(origen1_andar)
+			.to(fin1_andar, 50)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaD.rotation.x = degToRad(origen1_andar.rot_pierna1);
+			})
 
-			var origen1_andar = {rot_piernaD: 0}
-			var fin1_andar = {rot_piernaD: 35}
+		this.movimiento2_andar_I = new TWEEN.Tween(origen2_andar)
+			.to(fin2_andar, 50)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.piernaD.rotation.x = degToRad(origen2_andar.rot_pierna1);
+				that.piernaI.rotation.x = degToRad(origen2_andar.rot_pierna0);
+			})
 
-			this.movimiento1_andar = new TWEEN.Tween(origen1_andar)
-				.to(fin1_andar, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onUpdate(() => {
-					that.piernaD.rotation.x = degToRad(origen1_andar.rot_piernaD);
-				})
+		this.movimiento0_andar_I.chain(this.movimiento1_andar_I);
+		this.movimiento1_andar_I.chain(this.movimiento2_andar_I);
 
-			var origen2_andar = {rot_piernaD: 35, rot_piernaI: -35}
-			var fin2_andar = {rot_piernaD: 0, rot_piernaI: 0}
+		// Velocidad de movimiento de la Lady
+		this.velocidad = 35;
 
-			this.movimiento2_andar = new TWEEN.Tween(origen2_andar)
-				.to(fin2_andar, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onUpdate(() => {
-					that.piernaD.rotation.x = degToRad(origen2_andar.rot_piernaD);
-					that.piernaI.rotation.x = degToRad(origen2_andar.rot_piernaI);
-				})
-
-			this.movimiento0_andar.chain(this.movimiento1_andar);
-			this.movimiento1_andar.chain(this.movimiento2_andar);
-
-			this.ultimo_paso = "izquierda";
-		}
+		
 	}
 
 	createGUI(gui, titleGui) {
@@ -402,21 +396,28 @@ class Lady extends THREE.Object3D {
 	}
 
 	//Esto solo hace que mire hacia delante
-	mirame(){
+	mirame() {
 		this.rotation.y = 0;
 	}
 
 	//Prueba
-	caer(){
+	caer() {
 		this.position.y -= 4;
 	}
 
 	// FIXME: Arreglar para que se pueda mantener pulsada la tecla de andar
 	derecha() {
 		this.rotation.y = Math.PI / 2;
-		
-		this.movimiento0_andar.start();
-		
+
+		if (this.ultimo_paso == "izquierda") {
+			this.movimiento0_andar_D.start();
+			this.ultimo_paso = "derecha";
+		}
+		else if (this.ultimo_paso == "derecha") {
+			this.movimiento0_andar_I.start();
+			this.ultimo_paso = "izquierda";
+		}
+
 		this.tiempoAnterior_andar = Date.now();
 
 		this.andando_derecha = true;
@@ -425,17 +426,22 @@ class Lady extends THREE.Object3D {
 
 	izquierda() {
 		this.rotation.y = -Math.PI / 2;
-		
-		this.movimiento0_andar.start();
-		
+
+
+		if (this.ultimo_paso == "izquierda") {
+			this.movimiento0_andar_D.start();
+			this.ultimo_paso = "derecha";
+		}
+		else if (this.ultimo_paso == "derecha") {
+			this.movimiento0_andar_I.start();
+			this.ultimo_paso = "izquierda";
+		}
+
 		this.tiempoAnterior_andar = Date.now();
 
 		this.andando_izquierda = true;
 		this.pos_objetivo = this.position.x - 2;
 	}
-
-
-	
 
 	update() {
 		TWEEN.update();
@@ -503,28 +509,28 @@ class Lady extends THREE.Object3D {
 
 		//Para andar 
 		//Izquierda
-		if(this.andando_izquierda){
+		if (this.andando_izquierda) {
 			var tiempoActual = Date.now();
 			var seg = (tiempoActual - this.tiempoAnterior_andar) / 1000;
 
-			this.position.x  -= 2 * seg * 6;
+			this.position.x -= 2 * seg * 6;
 
 			this.tiempoAnterior_andar = tiempoActual;
 
-			if(this.position.x < this.pos_objetivo)
+			if (this.position.x < this.pos_objetivo)
 				this.andando_izquierda = false;
 		}
 
 		//Derecha
-		if(this.andando_derecha){
+		if (this.andando_derecha) {
 			var tiempoActual = Date.now();
 			var seg = (tiempoActual - this.tiempoAnterior_andar) / 1000;
 
-			this.position.x  += 2 * seg * 6;
+			this.position.x += 2 * seg * 6;
 
 			this.tiempoAnterior_andar = tiempoActual;
 
-			if(this.position.x > this.pos_objetivo)
+			if (this.position.x > this.pos_objetivo)
 				this.andando_derecha = false;
 		}
 	}

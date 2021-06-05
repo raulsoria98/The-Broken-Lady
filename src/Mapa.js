@@ -1,13 +1,14 @@
 import * as THREE from '../libs/three.module.js'
 
 import { Plataforma } from './Plataforma.js'
+import { Cucaracha } from './Cucaracha.js'
 
 class Mapa extends THREE.Object3D{
     constructor(){
         super();
 
         this.plataformas = [];
-        
+        this.enemigos = [];
         
 
         var salto = 4;
@@ -19,6 +20,9 @@ class Mapa extends THREE.Object3D{
         
         //Nivel 1
         this.plataformas.push(new Plataforma(10,4));
+        this.enemigos.push(new Cucaracha(10));
+        this.enemigos[0].modificarPosicion(5, this.enemigos[0].position.y);
+        
         //this.plataformas.push(new Plataforma(10,4));
         //this.plataformas.push(new Plataforma(10,4));
         //this.plataformas.push(new Plataforma(10,4));
@@ -61,6 +65,10 @@ class Mapa extends THREE.Object3D{
         //Nivel 4
         this.plataformas.forEach(plataforma => {
             this.add(plataforma);
+        });
+
+        this.enemigos.forEach(cucaracha =>{
+            this.add(cucaracha);
         });
     }
 }
