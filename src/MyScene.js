@@ -10,7 +10,7 @@ import * as TWEEN from '../libs/tween.esm.js'
 
 import {Lady} from './Lady.js'
 import {Mapa} from './Mapa.js'
-import {Cucaracha} from './Cucaracha.js'
+import {Gusano} from './Gusano.js'
 
 /// La clase fachada del modelo
 /**
@@ -20,6 +20,8 @@ import {Cucaracha} from './Cucaracha.js'
 class MyScene extends THREE.Scene {
 	constructor(myCanvas) {
 		super();
+
+		this.cayendo = false;
 
 		// Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
 		this.renderer = this.createRenderer(myCanvas);
@@ -39,6 +41,10 @@ class MyScene extends THREE.Scene {
 		// Un suelo 
 		this.createGround();
 
+
+		// Paredes
+		// this.createParedes();
+
 		// Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
 		this.axis = new THREE.AxesHelper(5);
 		this.add(this.axis);
@@ -53,32 +59,16 @@ class MyScene extends THREE.Scene {
 		this.mapa = new Mapa();
 		this.add(this.mapa);
 
-
-		this.cuca = new Cucaracha(10);
-
-		this.add(this.cuca)
-		//Para la camara
-		this.nuevoTarget = this.lady.position.clone()
-
-		//Posiciones iniciales de la camara
-
-		this.posx = 0;
-		this.posy = 4;
-		this.posz = 25;
-
 		this.createCamera();
 
 	}
 
-	rotarCamera(grados) {
-		
-	}
 	createCamera() {
 		// Para crear una cámara le indicamos
 		//   El ángulo del campo de visión en grados sexagesimales
 		//   La razón de aspecto ancho/alto
 		//   Los planos de recorte cercano y lejano
-		this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+		this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
 		// También se indica dónde se coloca
 		this.camera.position.set(0, 10, 50);
 		// Y hacia dónde mira
@@ -107,8 +97,48 @@ class MyScene extends THREE.Scene {
 		ground.position.y = -4;
 		ground.position.z = 20;
 
+		var textureBack = new THREE.TextureLoader().load('../img/skyfinal_0.png');
+		this.background = textureBack;
+
 		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
 		this.add(ground);
+	}
+	
+	createParedes(){
+		var geometryPared = new THREE.BoxGeometry(50, 50, 0.2);
+		
+		// El material se hará con una textura de madera
+		var texture = new THREE.TextureLoader().load('../img/metalico.jpg');
+		var materialPared = new THREE.MeshPhongMaterial({map: texture,transparent: false, opacity: 0.7});
+
+		// Ya se puede construir el Mesh
+		var pared = new THREE.Mesh(geometryPared, materialPared);
+
+		// Todas las figuras se crean centradas en el origen.
+		// El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
+		pared.position.x = 0;
+		pared.position.y = 25;
+		pared.position.z = -5; //TODAS LAS PLATAFORMAS TIENEN 5 DE ANCHO
+		
+
+		//Izquierda
+		var geomIzquierda = new THREE.BoxGeometry(0.2, 50, 100);
+		this.paredIzquierda = new THREE.Mesh(geomIzquierda, materialPared);
+		this.paredIzquierda.position.y = 21;
+		this.paredIzquierda.position.x = -25;
+
+		//Derecha
+		var geomDerecha = new THREE.BoxGeometry(0.2, 50, 100);
+		this.paredDerecha = new THREE.Mesh(geomDerecha, materialPared);
+		this.paredDerecha.position.y = 21;
+		this.paredDerecha.position.x = 25;
+
+
+		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
+		this.add(pared);
+		this.add(this.paredIzquierda);
+		this.add(this.paredDerecha);
+
 	}
 
 	createGUI() {
@@ -196,38 +226,43 @@ class MyScene extends THREE.Scene {
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 	}
 
-	updateCamera(){
-		
+	updateCamera() {
+
 		//Posicion
 		this.camera.position.x = this.lady.position.x;
 		this.camera.position.y = this.lady.position.y + 10;
 	}
 
 	//Para comprobar las colisiones entre el personaje principal y los muñequitos y el suelo
-	colisiones(){
+	colisiones() {
+
 		var rayCaster = [];
 		var posicionLady = this.lady.position;
-		
-		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(0,-1,0))); // rayCaster[0]
-		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(1,0,0))); // rayCaster[1]
-		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(-1,0,0))); // rayCaster[2]
+		var posicionMartillo = this.lady.cajaColisionArma.position;
 
-		var plataformas = this.mapa.plataformas;
-		var enemigos = this.mapa.enemigos;
+		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(0, -1, 0), 0, 0.5)); // rayCaster[0]
+		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(1, 0, 0), 0, 1)); // rayCaster[1]
+		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(-1, 0, 0), 0, 1)); // rayCaster[2]
+
+		var plataformas = this.mapa.cajasPlataformas;
+		var enemigos = this.mapa.cajasEnemigos;
 
 		rayCaster.forEach(ray => {
+			
 			enemigos.forEach(enemigo => {
 				var interseccion = ray.intersectObject(enemigo);
-	
-				if(interseccion.length > 0)
-					console.log("interseccion");
+
+				if (interseccion.length > 0) {
+					enemigo.position.z -= 5;
+				}
 			});
 			
 			plataformas.forEach(plataforma => {
 				var interseccion = ray.intersectObject(plataforma);
+				if (interseccion.length > 0) { 
+					this.cayendo = false;
+				}
 
-				if(interseccion.length > 0)
-					console.log("interseccion");
 			});
 		});
 
@@ -246,6 +281,11 @@ class MyScene extends THREE.Scene {
 
 		// Colisiones
 		this.colisiones();
+		
+		if (this.cayendo == true) 
+			this.lady.position.y -= 0.15;
+
+		this.cayendo = true; //Tenemos que poner siempre a true aqui
 
 		// Se actualiza el resto del modelo
 		TWEEN.update();
@@ -266,12 +306,12 @@ class MyScene extends THREE.Scene {
 		switch (tecla.key) {
 			case 'a':
 				this.lady.izquierda();
-				
+
 				break;
 
 			case 'd':
 				this.lady.derecha();
-			
+
 				break;
 
 			case 's':

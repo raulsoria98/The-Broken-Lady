@@ -14,8 +14,8 @@ class Lady extends THREE.Object3D {
 		//Materiales
 		var texturaCuerpo = new THREE.TextureLoader().load('../img/cuerpo.jpeg');
 		var materialCuerpo = new THREE.MeshPhongMaterial({map: texturaCuerpo});
-		var materialOjitos = new THREE.MeshPhongMaterial({color: 0x000000, transparent: true, opacity: 0.7});
-		var materialMofletes = new THREE.MeshPhongMaterial({color: 0xFF0000, transparent: true, opacity: 0.7});
+		var materialOjitos = new THREE.MeshPhongMaterial({color: 0x000000, transparent: false, opacity: 0.7});
+		var materialMofletes = new THREE.MeshPhongMaterial({color: 0xFF0000, transparent: false, opacity: 0.7});
 
 		//Geometria ovalo
 		var geomOvalo = new THREE.SphereBufferGeometry(1, 30, 30);
@@ -65,7 +65,7 @@ class Lady extends THREE.Object3D {
 		//Cuernos
 		//Material cuernos
 		var texturaMadera = new THREE.TextureLoader().load('../img/madera-negra.jpg');
-		var materialCuernos = new THREE.MeshPhongMaterial({map: texturaMadera, transparent: true, opacity: 0.8});
+		var materialCuernos = new THREE.MeshPhongMaterial({map: texturaMadera, transparent: false, opacity: 0.8});
 
 		// Variables para la animacion
 		this.altura_cuernos = 1.2;
@@ -138,18 +138,26 @@ class Lady extends THREE.Object3D {
 		this.manoDM.position.x = -(manoGeom.parameters.radius + hombroGeom.parameters.radius + brazoGeom.parameters.height - 0.2);
 
 		// Arma
+		var cajaColisionGeomArma = new THREE.BoxBufferGeometry(2, 1.5, 1.5);
+		var materialColisionadorArma = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+		this.cajaColisionArma = new THREE.Mesh(cajaColisionGeomArma, materialColisionadorArma);
+
+
 		var geomMango = new THREE.CylinderBufferGeometry(0.15, 0.15, 2, 30, 30);
-		var geomMazo = new THREE.BoxBufferGeometry(2, 0.7, 0.7);
+		var geomMazo = new THREE.BoxBufferGeometry(2, 1, 1);
 
 		this.mango = new THREE.Mesh(geomMango, materialCuerpo);
 		this.mazo = new THREE.Mesh(geomMazo, materialCuernos);
 		this.mazo.position.y += this.mazo.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
 		this.mango.position.y += this.mango.geometry.parameters.height / 2;
+		this.cajaColisionArma.position.y += this.cajaColisionArma.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
+
 
 		this.arma = new THREE.Object3D();
-		this.arma.add(this.mango, this.mazo);
+		this.arma.add(this.mango, this.mazo, this.cajaColisionArma);
 		this.arma.rotation.y += degToRad(90);
 		this.arma.position.x += this.brazoDM.geometry.parameters.height + this.hombroDM.geometry.parameters.radius;
+
 
 		//Nodo brazos Izq
 		var altura_brazos = 1.85;
@@ -194,9 +202,16 @@ class Lady extends THREE.Object3D {
 		this.lady.add(this.cuerpo, this.brazoI, this.brazoD, this.piernaI, this.piernaD);
 		this.lady.position.y = piernaGeom.parameters.height;
 
-		//Escalado
+		//Cajas para las colisiones
+		this.cajaColisionGeom = new THREE.BoxBufferGeometry(4, 7, 4);
+		this.materialColisionador = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+		this.cajaColision = new THREE.Mesh(this.cajaColisionGeom, this.materialColisionador);
 
-		this.add(this.lady);
+		this.cajaColision.position.y = 4;
+		this.lady.position.y -= 4;
+
+		this.cajaColision.add(this.lady);
+		this.add(this.cajaColision);
 
 		//Para controlar el tiempo de la animacion de parpadeo
 		this.tiempoAns = Date.now();
@@ -219,7 +234,6 @@ class Lady extends THREE.Object3D {
 				that.brazoI.rotation.y = degToRad(origen_ataque.rot_brazo);
 				that.arma.rotation.y = degToRad(origen_ataque.rot_arma);
 				that.arma.rotation.x = degToRad(origen_ataque.rot_palante);
-				
 			})
 			.yoyo(true).repeat(1)
 
@@ -285,10 +299,13 @@ class Lady extends THREE.Object3D {
 		this.movimiento0_andar_I.chain(this.movimiento1_andar_I);
 		this.movimiento1_andar_I.chain(this.movimiento2_andar_I);
 
+		this.mirandoHacia = "derecha";
+
 		// Velocidad de movimiento de la Lady
 		this.velocidad = 35;
 
-		
+
+
 	}
 
 	createGUI(gui, titleGui) {
@@ -324,7 +341,13 @@ class Lady extends THREE.Object3D {
 	saltar() {
 		//TWEEN SALTO
 		var that = this;
+		var salto = 6;
+		var desplazamiento = 8;
 		var escalado = 0.4;
+		if (this.mirandoHacia == "derecha")
+			var desp = desplazamiento;
+		else
+			var desp = -desplazamiento;
 
 		var origen1 = {escala_piernas: 1, pos: this.position.y};
 		var fin1 = {escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado)};
@@ -338,16 +361,17 @@ class Lady extends THREE.Object3D {
 				that.position.y = origen1.pos;
 			})
 
-		var origen2 = {escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado)};
-		var fin2 = {escala_piernas: 1, pos: this.position.y + 4};
+		var origen2 = {escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado), desp: this.position.x};
+		var fin2 = {escala_piernas: 1, pos: this.position.y + salto, desp: this.position.x + desp};
 
 		var movimiento2 = new TWEEN.Tween(origen2)
-			.to(fin2, 200)
+			.to(fin2, 500)
 			.easing(TWEEN.Easing.Quadratic.InOut)
 			.onUpdate(() => {
 				that.piernaI.scale.y = origen2.escala_piernas;
 				that.piernaD.scale.y = origen2.escala_piernas;
 				that.position.y = origen2.pos;
+				that.position.x = origen2.desp;
 			})
 
 		movimiento1.chain(movimiento2);
@@ -407,6 +431,7 @@ class Lady extends THREE.Object3D {
 
 	// FIXME: Arreglar para que se pueda mantener pulsada la tecla de andar
 	derecha() {
+		this.mirandoHacia = "derecha";
 		this.rotation.y = Math.PI / 2;
 
 		if (this.ultimo_paso == "izquierda") {
@@ -425,6 +450,7 @@ class Lady extends THREE.Object3D {
 	}
 
 	izquierda() {
+		this.mirandoHacia = "izquierda";
 		this.rotation.y = -Math.PI / 2;
 
 

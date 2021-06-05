@@ -4,9 +4,15 @@ class Plataforma extends THREE.Object3D{
     constructor(largo, alto){
         super();
 
-        var texturaAbajo = new THREE.TextureLoader().load('../img/ladrillo-gris.jpg');
+        var texturaAbajo = new THREE.TextureLoader().load('../img/Brick_02.png');
+        texturaAbajo.wrapS = THREE.RepeatWrapping;
+        texturaAbajo.wrapT = THREE.RepeatWrapping;
+        texturaAbajo.repeat.set( 10, 1 );
         var materialAbajo = new THREE.MeshPhongMaterial({ map: texturaAbajo });
         var texturaArriba = new THREE.TextureLoader().load('../img/hierba-verde.png');
+        texturaArriba.wrapS = THREE.RepeatWrapping;
+        texturaArriba.wrapT = THREE.RepeatWrapping;
+        texturaArriba.repeat.set( 10, 1 );
         var materialArriba = new THREE.MeshPhongMaterial({ map: texturaArriba });
         this.largo = largo;
         var geomArriba = new THREE.BoxBufferGeometry(largo, alto/2, 10);
