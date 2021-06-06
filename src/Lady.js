@@ -9,7 +9,7 @@ function degToRad(deg) {
 class Lady extends THREE.Object3D {
 	constructor(scene) {
 		super();
-		this.vida = 0	; //Mi vida
+		this.vida = 0; //Mi vida
 		this.scene = scene;
 		//Cabeza - nodo
 		//Materiales
@@ -151,7 +151,7 @@ class Lady extends THREE.Object3D {
 		this.mazo = new THREE.Mesh(geomMazo, materialCuernos);
 		this.mazo.position.y += this.mazo.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
 		this.mango.position.y += this.mango.geometry.parameters.height / 2;
-		
+
 
 
 		this.arma = new THREE.Object3D();
@@ -227,8 +227,8 @@ class Lady extends THREE.Object3D {
 		this.ultimo_paso = "izquierda";
 
 		//TWEEN ATAQUE
-		var origen_ataque = {rot_brazo: 0, rot_arma: 90, rot_palante: 0, cajaX : 0, cajaY: 0, cajaZ : 0}
-		var fin_ataque = {rot_brazo: -60, rot_arma: 110, rot_palante: 45, cajaX : 2, cajaY: -2, cajaZ : 2}
+		var origen_ataque = {rot_brazo: 0, rot_arma: 90, rot_palante: 0, cajaX: 0, cajaY: 0, cajaZ: 0}
+		var fin_ataque = {rot_brazo: -60, rot_arma: 110, rot_palante: 45, cajaX: 2, cajaY: -2, cajaZ: 2}
 
 		var that = this;
 		this.movimiento_ataque = new TWEEN.Tween(origen_ataque)
@@ -240,7 +240,7 @@ class Lady extends THREE.Object3D {
 				that.arma.rotation.x = degToRad(origen_ataque.rot_palante);
 
 				//Modificamos la hitbox de posicion segun la rotcion visual del arma, tenemos que tener cuidado que el arma no se mueva de sitio
-				that.arma.position.x = -origen_ataque.cajaX -degToRad(origen_ataque.rot_palante); //Para que no se mueva de la muñeca el arma
+				that.arma.position.x = -origen_ataque.cajaX - degToRad(origen_ataque.rot_palante); //Para que no se mueva de la muñeca el arma
 				that.cajaColisionArma.position.x = this.brazoDM.geometry.parameters.height + this.hombroDM.geometry.parameters.radius + degToRad(origen_ataque.rot_palante) + origen_ataque.cajaX;
 
 				that.arma.position.z = -origen_ataque.cajaZ;
@@ -317,8 +317,16 @@ class Lady extends THREE.Object3D {
 		// Velocidad de movimiento de la Lady
 		this.velocidad = 35;
 
+		// Movimiento morir
+		var origen_morir = {rot: 0}
+		var fin_morir = {rot: -90}
 
-
+		this.movimiento_morir = new TWEEN.Tween(origen_morir)
+			.to(fin_morir, 3000)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(() => {
+				that.rotation.x = degToRad(origen_morir.rot);
+			})
 	}
 
 	createGUI(gui, titleGui) {
@@ -390,46 +398,6 @@ class Lady extends THREE.Object3D {
 		movimiento1.chain(movimiento2);
 
 		movimiento1.start();
-		// var factor_escala_salto = 0.013;
-		// var factor_elevacion_salto = 0.1;
-		// var tiempoAnterior = Date.now();
-		// var tiempoActual;
-		// var seg;
-
-		// while(this.preparando_salto){
-		//     tiempoActual = Date.now();
-		//     seg = (tiempoActual - tiempoAnterior) / 1000;
-		//     console.log(seg);
-
-		//     if(this.piernaD.scale.y > 0.5){
-		//         this.piernaD.scale.y -= factor_escala_salto * seg;
-		//         this.piernaI.scale.y -= factor_escala_salto * seg;
-
-
-		//         this.lady.position.y -= this.largoPierna * factor_escala_salto * seg;
-		//     }
-		//     else{
-		//         this.preparando_salto = false;
-		//     }
-
-
-		// }
-
-		// while(!this.preparando_salto){
-		//     if(this.piernaD.scale.y < 1){
-		//         this.piernaD.scale.y += factor_escala_salto;
-		//         this.piernaI.scale.y += factor_escala_salto;
-
-
-		//         this.lady.position.y += this.largoPierna * factor_escala_salto + factor_elevacion_salto;
-		//     }
-		//     else{
-		//         this.preparando_salto = true;
-
-		//     }
-		// }
-
-		this.tiempoAnterior_andar = Date.now();
 	}
 
 	//Esto solo hace que mire hacia delante
@@ -482,22 +450,57 @@ class Lady extends THREE.Object3D {
 		this.pos_objetivo = this.position.x - 2;
 	}
 
-	iniciarPartida(){
+	iniciarPartida() {
 		//Set de la vida
 		this.vida = 10;
-
+		this.rotation.x = 0;
 	}
 
-	ladyGolpeada(){
-		this.vida -=1;
+	ladyGolpeada() {
+		this.vida -= 1;
+
+		// FIXME: Arreglar esto para que no vuelva al estado inicial
+		var that = this;
+		var desplazamiento = 8;
+		if (this.mirandoHacia == "derecha")
+			var desp = -desplazamiento;
+		else
+			var desp = desplazamiento;
+
+		var origen1 = {desp: this.position.x, alto: this.position.y};
+		var fin1 = {desp: this.position.x + desp / 2, alto: this.position.y + 2};
+
+		var movimiento1 = new TWEEN.Tween(origen1)
+			.to(fin1, 200)
+			.easing(TWEEN.Easing.Linear.None)
+			.onUpdate(() => {
+				that.position.y = origen1.alto;
+				that.position.x = origen1.desp;
+				console.log(this.position.x)
+			})
+
+		var origen2 = {desp: this.position.x + desp / 2, alto: this.position.y + 2};
+		var fin2 = {desp: this.position.x + desp, alto: this.position.y};
+
+		var movimiento2 = new TWEEN.Tween(origen2)
+			.to(fin2, 300)
+			.easing(TWEEN.Easing.Linear.None)
+			.onUpdate(() => {
+				that.position.y = origen2.alto;
+				that.position.x = origen2.desp;
+			})
+
+		movimiento1.chain(movimiento2);
+
+		movimiento1.start();
 	}
 
-	miVida(){
-		return this.vida ;
+	miVida() {
+		return this.vida;
 	}
 
-	morir(){
-
+	morir() {
+		this.movimiento_morir.start();
 	}
 
 	update() {

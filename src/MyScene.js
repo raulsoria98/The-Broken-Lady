@@ -297,23 +297,20 @@ class MyScene extends THREE.Scene {
 		rayCaster.push(new THREE.Raycaster(posicionMartillo, new THREE.Vector3(0, 0, -1), 0, 0.2)); // rayCaster[5]
 
 		rayCaster.forEach(ray => {
-			var numEnemy = 0;
 
 			if (this.estadoLady == "VULNERABLE") {
-				enemigos.forEach(enemigo => {
+				enemigos.forEach((enemigo, index) => {
 					var interseccion = ray.intersectObject(enemigo, true);
 
 					if (interseccion.length > 0) {
 						//Esta parte va en la interaccion del martillo
-						var muere = this.mapa.enemigos[numEnemy].golpear(); //Recogemos si ha muerto o no
+						var muere = this.mapa.enemigos[index].golpear(); //Recogemos si ha muerto o no
 
 						if (muere == true)
-							this.mapa.enemigoMuere(numEnemy);
+							this.mapa.enemigoMuere(index);
 
 						console.log("Le pego al bicho");
 					}
-
-					numEnemy += 1; //Para saber que enemigo tenemos que matar
 				});
 			}
 
@@ -346,10 +343,10 @@ class MyScene extends THREE.Scene {
 					var interseccion = ray.intersectObject(enemigo);
 
 					if (interseccion.length > 0) {
-						this.lady.ladyGolpeada(); //Pasamos a un estado en el que indicamos que es invulnerable
+						//this.lady.ladyGolpeada(); //Pasamos a un estado en el que indicamos que es invulnerable
 						this.estadoLady = "GOLPEADA";
 						this.golpeada = Date.now();
-
+						console.log("Después " + this.lady.position.x)
 					}
 				});
 			}
@@ -363,6 +360,12 @@ class MyScene extends THREE.Scene {
 			});
 		});
 
+		//Control del fin de juego
+		if (this.lady.miVida() <= 0) {
+			//Lady ha muerto, partida perdida
+			this.lady.morir();
+			this.perderPartida();
+		}
 	}
 
 	setVida() {
@@ -402,18 +405,16 @@ class MyScene extends THREE.Scene {
 		if (this.mapa.cajasEnemigos.length == 0)
 			this.ganarPartida();
 
-		//Control del fin de juego
-		if (this.lady.miVida() <= 0) {
-			//Lady ha muerto, partida perdida
-			this.lady.morir();
-			this.perderPartida();
-		}
-
 		if (this.lady.position.y <= -10) // se ha caido al agua
 			this.perderPartida();
 
-		//Control para quitar la invulnerabilidad
 		if (this.estadoLady == "GOLPEADA") {
+			this.lady.ladyGolpeada();
+			this.estadoLady = "INVULNERABLE";
+		}
+
+		//Control para quitar la invulnerabilidad
+		if (this.estadoLady == "INVULNERABLE") {
 			var tiempoActual = Date.now();
 			var seg = (tiempoActual - this.golpeada) / 1000;
 
@@ -450,6 +451,11 @@ class MyScene extends THREE.Scene {
 			case 'a':
 				if (this.estado == "ON")
 					this.lady.izquierda();
+
+				break;
+			case 'y':
+				if (this.estado == "ON")
+					this.lady.ladyGolpeada();
 
 				break;
 
