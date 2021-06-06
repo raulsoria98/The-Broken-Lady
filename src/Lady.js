@@ -9,6 +9,7 @@ function degToRad(deg) {
 class Lady extends THREE.Object3D {
 	constructor(scene) {
 		super();
+		this.vida = 0	; //Mi vida
 		this.scene = scene;
 		//Cabeza - nodo
 		//Materiales
@@ -139,7 +140,7 @@ class Lady extends THREE.Object3D {
 
 		// Arma
 		var cajaColisionGeomArma = new THREE.BoxBufferGeometry(2, 1.5, 1.5);
-		var materialColisionadorArma = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+		var materialColisionadorArma = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.3});
 		this.cajaColisionArma = new THREE.Mesh(cajaColisionGeomArma, materialColisionadorArma);
 
 
@@ -150,13 +151,16 @@ class Lady extends THREE.Object3D {
 		this.mazo = new THREE.Mesh(geomMazo, materialCuernos);
 		this.mazo.position.y += this.mazo.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
 		this.mango.position.y += this.mango.geometry.parameters.height / 2;
-		this.cajaColisionArma.position.y += this.cajaColisionArma.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
+		
 
 
 		this.arma = new THREE.Object3D();
-		this.arma.add(this.mango, this.mazo, this.cajaColisionArma);
+		this.arma.add(this.mango, this.mazo);
+		this.cajaColisionArma.add(this.arma);
 		this.arma.rotation.y += degToRad(90);
-		this.arma.position.x += this.brazoDM.geometry.parameters.height + this.hombroDM.geometry.parameters.radius;
+		this.arma.position.y -= this.cajaColisionArma.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
+		this.cajaColisionArma.position.y += this.cajaColisionArma.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
+		this.cajaColisionArma.position.x += this.brazoDM.geometry.parameters.height + this.hombroDM.geometry.parameters.radius;
 
 
 		//Nodo brazos Izq
@@ -171,7 +175,7 @@ class Lady extends THREE.Object3D {
 
 		//Nodo brazos Dcho
 		this.brazoI = new THREE.Object3D();
-		this.brazoI.add(this.hombroIM, this.manoIM, this.arma);
+		this.brazoI.add(this.hombroIM, this.manoIM, this.cajaColisionArma); //Añadimos la caja de la colision con el arma dentro
 		this.brazoI.position.y = altura_brazos;
 		this.brazoI.position.x = separacion_brazos;
 		this.brazoI.rotation.z = degToRad(-40);
@@ -223,8 +227,8 @@ class Lady extends THREE.Object3D {
 		this.ultimo_paso = "izquierda";
 
 		//TWEEN ATAQUE
-		var origen_ataque = {rot_brazo: 0, rot_arma: 90, rot_palante: 0}
-		var fin_ataque = {rot_brazo: -60, rot_arma: 110, rot_palante: 45}
+		var origen_ataque = {rot_brazo: 0, rot_arma: 90, rot_palante: 0, cajaX : 0, cajaY: 0, cajaZ : 0}
+		var fin_ataque = {rot_brazo: -60, rot_arma: 110, rot_palante: 45, cajaX : 2, cajaY: -2, cajaZ : 2}
 
 		var that = this;
 		this.movimiento_ataque = new TWEEN.Tween(origen_ataque)
@@ -234,10 +238,19 @@ class Lady extends THREE.Object3D {
 				that.brazoI.rotation.y = degToRad(origen_ataque.rot_brazo);
 				that.arma.rotation.y = degToRad(origen_ataque.rot_arma);
 				that.arma.rotation.x = degToRad(origen_ataque.rot_palante);
+
+				//Modificamos la hitbox de posicion segun la rotcion visual del arma, tenemos que tener cuidado que el arma no se mueva de sitio
+				that.arma.position.x = -origen_ataque.cajaX -degToRad(origen_ataque.rot_palante); //Para que no se mueva de la muñeca el arma
+				that.cajaColisionArma.position.x = this.brazoDM.geometry.parameters.height + this.hombroDM.geometry.parameters.radius + degToRad(origen_ataque.rot_palante) + origen_ataque.cajaX;
+
+				that.arma.position.z = -origen_ataque.cajaZ;
+				that.cajaColisionArma.position.z = origen_ataque.cajaZ;
+				//console.log(that.cajaColisionArma.position);
+
 			})
 			.yoyo(true).repeat(1)
 
-		//TWEEN ANDAR
+		//TWEEN ANDARq
 		var origen0_andar = {rot_pierna0: 0}
 		var fin0_andar = {rot_pierna0: -35}
 
@@ -467,6 +480,24 @@ class Lady extends THREE.Object3D {
 
 		this.andando_izquierda = true;
 		this.pos_objetivo = this.position.x - 2;
+	}
+
+	iniciarPartida(){
+		//Set de la vida
+		this.vida = 10;
+
+	}
+
+	ladyGolpeada(){
+		this.vida -=1;
+	}
+
+	miVida(){
+		return this.vida ;
+	}
+
+	morir(){
+
 	}
 
 	update() {

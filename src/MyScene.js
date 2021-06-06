@@ -30,13 +30,16 @@ class MyScene extends THREE.Scene {
 		this.gui = this.createGUI();
 
 		// Construimos los distinos elementos que tendremos en la escena
+		this.lady = new Lady(this);
+		this.add(this.lady);
+
 
 		// Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta. Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
 		// Tras crear cada elemento se añadirá a la escena con   this.add(variable)
 		this.createLights();
 
-		// Tendremos una cámara con un control de movimiento con el ratón
-
+		//La camara que seguira a lady
+		this.createCamera();
 
 		// Un suelo 
 		this.createGround();
@@ -46,21 +49,55 @@ class MyScene extends THREE.Scene {
 		// this.createParedes();
 
 		// Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
-		this.axis = new THREE.AxesHelper(5);
-		this.add(this.axis);
+		//this.axis = new THREE.AxesHelper(5);
+		//this.add(this.axis);
 
 
 		// Por último creamos el modelo.
 		// El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
 		// la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-		this.lady = new Lady(this);
-		this.add(this.lady);
 
+
+		this.iniciarPartida();
+
+	}
+
+	iniciarPartida() {
+		//Mapa
 		this.mapa = new Mapa();
 		this.add(this.mapa);
 
-		this.createCamera();
+		//Objetos
+		this.lady.iniciarPartida();
+		this.lady.position.set(0, 0, 0); //Posicion inicial
+		this.lady.rotation.y = 0;  //Inicialmente nos mira
 
+		//Camara
+		this.iniciarCamara(); //Colocamos la camara
+
+		//ESTADOS DEL JUEGO
+		this.estado = "OFF";
+		this.estadoLady = "VULNERABLE";
+
+		//REGISTROS DE TIEMPO PARA CONTROLAR EL TIEMPO 
+		this.golpeada = null;
+
+		document.getElementById("ganar").style.display = "none";
+		document.getElementById("perder").style.display = "none";
+		document.getElementById("inicio").style.display = "block";
+
+	}
+
+	perderPartida() {
+		console.log("perder");
+		document.getElementById("perder").style.display = "block";
+		this.estado = "PERDER";
+	}
+
+	ganarPartida() {
+		console.log("ganar");
+		document.getElementById("ganar").style.display = "block";
+		this.estado = "GANAR";
 	}
 
 	createCamera() {
@@ -70,11 +107,18 @@ class MyScene extends THREE.Scene {
 		//   Los planos de recorte cercano y lejano
 		this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
 		// También se indica dónde se coloca
+		// this.camera.position.set(0, 10, 50);
+		// Y hacia dónde mira
+		// var look = this.lady.position;
+		// this.camera.lookAt(look);
+
+	}
+
+	iniciarCamara() {
 		this.camera.position.set(0, 10, 50);
 		// Y hacia dónde mira
 		var look = this.lady.position;
 		this.camera.lookAt(look);
-
 	}
 
 	createGround() {
@@ -103,13 +147,13 @@ class MyScene extends THREE.Scene {
 		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
 		this.add(ground);
 	}
-	
-	createParedes(){
+
+	createParedes() {
 		var geometryPared = new THREE.BoxGeometry(50, 50, 0.2);
-		
+
 		// El material se hará con una textura de madera
 		var texture = new THREE.TextureLoader().load('../img/metalico.jpg');
-		var materialPared = new THREE.MeshPhongMaterial({map: texture,transparent: false, opacity: 0.7});
+		var materialPared = new THREE.MeshPhongMaterial({map: texture, transparent: false, opacity: 0.7});
 
 		// Ya se puede construir el Mesh
 		var pared = new THREE.Mesh(geometryPared, materialPared);
@@ -119,7 +163,7 @@ class MyScene extends THREE.Scene {
 		pared.position.x = 0;
 		pared.position.y = 25;
 		pared.position.z = -5; //TODAS LAS PLATAFORMAS TIENEN 5 DE ANCHO
-		
+
 
 		//Izquierda
 		var geomIzquierda = new THREE.BoxGeometry(0.2, 50, 100);
@@ -151,7 +195,7 @@ class MyScene extends THREE.Scene {
 		this.guiControls = new function () {
 			// En el contexto de una función   this   alude a la función
 			this.lightIntensity = 0.5;
-			this.axisOnOff = true;
+			//this.axisOnOff = true;
 			this.animacion = false;
 		}
 
@@ -162,7 +206,7 @@ class MyScene extends THREE.Scene {
 		folder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1).name('Intensidad de la Luz : ');
 
 		// Y otro para mostrar u ocultar los ejes
-		folder.add(this.guiControls, 'axisOnOff').name('Mostrar ejes : ');
+		//folder.add(this.guiControls, 'axisOnOff').name('Mostrar ejes : ');
 
 		return gui;
 	}
@@ -233,33 +277,86 @@ class MyScene extends THREE.Scene {
 		this.camera.position.y = this.lady.position.y + 10;
 	}
 
+	ataque() {
+		var rayCaster = [];
+		//Si la lady mira a la derecha, se le suma la posicion del martillo
+		if (this.lady.mirandoHacia == "derecha") {
+			var posicionMartillo = new THREE.Vector3(this.lady.position.x + this.lady.cajaColisionArma.position.x, this.lady.position.y + this.lady.cajaColisionArma.position.y, this.lady.position.z + this.lady.cajaColisionArma.position.z);
+		}
+		else {
+			var posicionMartillo = new THREE.Vector3(this.lady.position.x - this.lady.cajaColisionArma.position.x, this.lady.position.y + this.lady.cajaColisionArma.position.y, -this.lady.position.z - this.lady.cajaColisionArma.position.z);
+		}
+		//Si la lady mira hacia la izquierda, se la restamos
+		//console.log(posicionMartillo);
+
+		var enemigos = this.mapa.cajasEnemigos;
+
+		rayCaster.push(new THREE.Raycaster(posicionMartillo, new THREE.Vector3(0, 1, 0), 0, 0.2)); // rayCaster[0]
+		rayCaster.push(new THREE.Raycaster(posicionMartillo, new THREE.Vector3(0, -1, 0), 0, 0.2)); // rayCaster[1]
+		rayCaster.push(new THREE.Raycaster(posicionMartillo, new THREE.Vector3(0, 0, 1), 0, 0.2)); // rayCaster[4]
+		rayCaster.push(new THREE.Raycaster(posicionMartillo, new THREE.Vector3(0, 0, -1), 0, 0.2)); // rayCaster[5]
+
+		rayCaster.forEach(ray => {
+			var numEnemy = 0;
+
+			if (this.estadoLady == "VULNERABLE") {
+				enemigos.forEach(enemigo => {
+					var interseccion = ray.intersectObject(enemigo, true);
+
+					if (interseccion.length > 0) {
+						//Esta parte va en la interaccion del martillo
+						var muere = this.mapa.enemigos[numEnemy].golpear(); //Recogemos si ha muerto o no
+
+						if (muere == true)
+							this.mapa.enemigoMuere(numEnemy);
+
+						console.log("Le pego al bicho");
+					}
+
+					numEnemy += 1; //Para saber que enemigo tenemos que matar
+				});
+			}
+
+
+		});
+	}
+
 	//Para comprobar las colisiones entre el personaje principal y los muñequitos y el suelo
 	colisiones() {
 
 		var rayCaster = [];
 		var posicionLady = this.lady.position;
-		var posicionMartillo = this.lady.cajaColisionArma.position;
+
 
 		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(0, -1, 0), 0, 0.5)); // rayCaster[0]
-		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(1, 0, 0), 0, 1)); // rayCaster[1]
-		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(-1, 0, 0), 0, 1)); // rayCaster[2]
+		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(1, 0, 0), 0, 1.2)); // rayCaster[1]
+		rayCaster.push(new THREE.Raycaster(posicionLady, new THREE.Vector3(-1, 0, 0), 0, 1.2)); // rayCaster[2]
 
 		var plataformas = this.mapa.cajasPlataformas;
 		var enemigos = this.mapa.cajasEnemigos;
 
-		rayCaster.forEach(ray => {
-			
-			enemigos.forEach(enemigo => {
-				var interseccion = ray.intersectObject(enemigo);
+		//console.log("Numero de enemigos: ")
+		//console.log(this.mapa.cajasEnemigos);
 
-				if (interseccion.length > 0) {
-					enemigo.position.z -= 5;
-				}
-			});
-			
+
+		rayCaster.forEach(ray => {
+
+			if (this.estadoLady == "VULNERABLE") {
+				enemigos.forEach(enemigo => {
+					var interseccion = ray.intersectObject(enemigo);
+
+					if (interseccion.length > 0) {
+						this.lady.ladyGolpeada(); //Pasamos a un estado en el que indicamos que es invulnerable
+						this.estadoLady = "GOLPEADA";
+						this.golpeada = Date.now();
+
+					}
+				});
+			}
+
 			plataformas.forEach(plataforma => {
 				var interseccion = ray.intersectObject(plataforma);
-				if (interseccion.length > 0) { 
+				if (interseccion.length > 0) {
 					this.cayendo = false;
 				}
 
@@ -268,21 +365,64 @@ class MyScene extends THREE.Scene {
 
 	}
 
+	setVida() {
+
+		//Segun la vida que tengamos añadimos mas corazones a la vista
+
+		document.getElementById("vida").innerHTML = '<p>SALUD</p>';
+
+		for (var i = 0; i < this.lady.miVida(); i++)
+			document.getElementById("vida").innerHTML += '<img src="../img/vida.png" />';
+	}
+
 	update() {
 		// Se actualizan los elementos de la escena para cada frame
 		// Se actualiza la intensidad de la luz con lo que haya indicado el usuario en la gui
 		this.spotLight.intensity = this.guiControls.lightIntensity;
 
 		// Se muestran o no los ejes según lo que idique la GUI
-		this.axis.visible = this.guiControls.axisOnOff;
+		//this.axis.visible = this.guiControls.axisOnOff;
 
 		// Se actualiza la posición de la camara segun el movimiento de la lady
 		this.updateCamera();
 
+		//Para ver la vida
+		this.setVida();
+
 		// Colisiones
-		this.colisiones();
-		
-		if (this.cayendo == true) 
+
+		if (this.estado != "OFF" && this.estado != "PERDER") {
+			this.colisiones();
+			this.ataque();
+		}
+		else
+			this.cayendo = false; //Para que no caiga cuando estamos en pausa
+
+		//Si no nos quedan enemigos, hemos ganao yupiii
+		if (this.mapa.cajasEnemigos.length == 0)
+			this.ganarPartida();
+
+		//Control del fin de juego
+		if (this.lady.miVida() <= 0) {
+			//Lady ha muerto, partida perdida
+			this.lady.morir();
+			this.perderPartida();
+		}
+
+		if (this.lady.position.y <= -10) // se ha caido al agua
+			this.perderPartida();
+
+		//Control para quitar la invulnerabilidad
+		if (this.estadoLady == "GOLPEADA") {
+			var tiempoActual = Date.now();
+			var seg = (tiempoActual - this.golpeada) / 1000;
+
+			if (seg >= 2) {
+				this.estadoLady = "VULNERABLE"; //Si han pasado dos segundos desde su ultimo golpeo volvemos a su estado inicial
+			}
+		}
+
+		if (this.cayendo == true)
 			this.lady.position.y -= 0.15;
 
 		this.cayendo = true; //Tenemos que poner siempre a true aqui
@@ -301,36 +441,68 @@ class MyScene extends THREE.Scene {
 	}
 
 
+
 	//Para el movimiento
 	pulsarTecla(tecla) {
-		switch (tecla.key) {
+		var opcion = tecla.key.toLowerCase(); //Por si tienen activado en el teclado las mayusculas
+
+		switch (opcion) {
 			case 'a':
-				this.lady.izquierda();
+				if (this.estado == "ON")
+					this.lady.izquierda();
 
 				break;
 
 			case 'd':
-				this.lady.derecha();
+				if (this.estado == "ON")
+					this.lady.derecha();
 
 				break;
 
 			case 's':
-				this.lady.mirame();
+				if (this.estado == "ON")
+					this.lady.mirame();
 				break;
 
 			case 'w':
-				this.lady.caer();
+				if (this.estado == "ON")
+					this.lady.caer();
 				break;
 
 			case ' ':
-				console.log("saltar");
-				this.lady.saltar();
+				if (this.estado == "ON") {
+					this.lady.saltar();
+				} else if (this.estado == "OFF") {
+					this.estado = "ON";
+					//Ocultamos el mensaje de inicio
+					document.getElementById("inicio").style.display = "none";
+				}
+				break;
+
+			case 'n':
+				console.log(this.estado);
+				if (this.estado == "PERDER" || this.estado == "GANAR") {
+					this.iniciarPartida();
+				}
+
+				break;
+
+			case 'p':
+				if (this.estado == "OFF") {
+					this.estado = "ON";
+					document.getElementById("pausa").style.display = "none";
+				}
+				else {
+					this.estado = "OFF";
+					document.getElementById("pausa").style.display = "block";
+				}
 				break;
 
 			case 'q':
-				console.log("atacar");
-				this.lady.atacar();
+				if (this.estado == "ON") {
+					this.lady.atacar();
 
+				}
 				break;
 
 			default:

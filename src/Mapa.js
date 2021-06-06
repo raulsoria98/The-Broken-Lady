@@ -22,7 +22,10 @@ class Mapa extends THREE.Object3D{
         //Nivel 1
         this.plataformas.push(new Plataforma(10,4));
         this.enemigos.push(new Gusano());
-        this.enemigos[0].modificarPosicion(6, this.enemigos[0].position.y);
+        this.enemigos[0].modificarPosicion(12, this.enemigos[0].position.y);
+
+        this.enemigos.push(new Gusano());
+        this.enemigos[1].modificarPosicion(-15, this.enemigos[1].position.y);
         
         //this.plataformas.push(new Plataforma(10,4));
         //this.plataformas.push(new Plataforma(10,4));
@@ -74,6 +77,14 @@ class Mapa extends THREE.Object3D{
             this.add(enemigo);
             this.cajasEnemigos.push(enemigo.cajaColision);
         });
+    }
+
+
+    enemigoMuere(enemy){
+        console.log("Muere el enemigo: ")
+        console.log(enemy);
+        this.cajasEnemigos.splice(enemy, 1);
+        this.enemigos.splice(enemy, 1);
     }
 }
 

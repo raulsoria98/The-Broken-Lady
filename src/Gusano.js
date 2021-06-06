@@ -11,13 +11,15 @@ function degToRad(deg) {
 class Gusano extends THREE.Object3D{
     constructor(){
         super();
-
+        //Vida del bicho
+        this.vida = 3;
+        
         var that = this;
         var materialLoader = new MTLLoader();
         var objectLoader = new OBJLoader();
 
         this.cajaColisionGeom = new THREE.BoxBufferGeometry(4,4,12);
-        this.materialColisionador = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+        this.materialColisionador = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0.3});
         
 
         this.cajaColision = new THREE.Mesh(that.cajaColisionGeom, that.materialColisionador);
@@ -43,6 +45,27 @@ class Gusano extends THREE.Object3D{
         })
 
         this.rotation.y += degToRad(-90);
+    }
+
+    golpear(){
+        this.vida -= 1;
+        if(this.vida == 0){
+            this.morir();
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    iniciarGame(){
+        this.vida = 3;
+        this.add(this.cajaColision);
+    }
+
+    morir(){
+        console.log("memuero");
+        this.remove(this.cajaColision);
     }
 
     modificarPosicion(x, y) {
