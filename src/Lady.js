@@ -363,8 +363,8 @@ class Lady extends THREE.Object3D {
 	saltar() {
 		//TWEEN SALTO
 		var that = this;
-		var salto = 6;
-		var desplazamiento = 8;
+		var salto = 10;
+		var desplazamiento = 12;
 		var escalado = 0.4;
 		if (this.mirandoHacia == "derecha")
 			var desp = desplazamiento;

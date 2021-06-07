@@ -60,6 +60,7 @@ class MyScene extends THREE.Scene {
 
 		this.iniciarPartida();
 
+		this.tiempoAnterior = Date.now();
 	}
 
 	iniciarPartida() {
@@ -406,7 +407,7 @@ class MyScene extends THREE.Scene {
 
 		if (this.lady.position.y <= -10) // se ha caido al agua
 			this.perderPartida();
-			
+
 		if (this.estadoLady == "GOLPEADA") {
 			this.lady.ladyGolpeada();
 			this.estadoLady = "INVULNERABLE";
@@ -422,8 +423,12 @@ class MyScene extends THREE.Scene {
 			}
 		}
 
+		var tiempoAct = Date.now();
+		var transcurrido = (tiempoAct - this.tiempoAnterior) / 1000;
 		if (this.cayendo == true)
-			this.lady.position.y -= 0.15;
+			this.lady.position.y -= 20 * transcurrido;
+
+		this.tiempoAnterior = tiempoAct;
 
 		this.cayendo = true; //Tenemos que poner siempre a true aqui
 
