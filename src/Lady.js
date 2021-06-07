@@ -1,6 +1,5 @@
 import * as THREE from '../libs/three.module.js'
 import * as TWEEN from '../libs/tween.esm.js'
-import {ThreeBSP} from '../libs/ThreeBSP.js'
 
 function degToRad(deg) {
 	return deg * (Math.PI / 180);
@@ -11,6 +10,8 @@ class Lady extends THREE.Object3D {
 		super();
 		this.vida = 0; //Mi vida
 		this.scene = scene;
+		this.movimientoDanio = new TWEEN.Tween(); //Para el retroceso
+
 		//Cabeza - nodo
 		//Materiales
 		var texturaCuerpo = new THREE.TextureLoader().load('../img/cuerpo.jpeg');
@@ -315,7 +316,7 @@ class Lady extends THREE.Object3D {
 		this.mirandoHacia = "derecha";
 
 		// Velocidad de movimiento de la Lady
-		this.velocidad = 35;
+		this.velocidad = 15;
 
 		// Movimiento morir
 		var origen_morir = {rot: 0}
@@ -410,16 +411,15 @@ class Lady extends THREE.Object3D {
 		this.position.y -= 4;
 	}
 
-	// FIXME: Arreglar para que se pueda mantener pulsada la tecla de andar
 	derecha() {
 		this.mirandoHacia = "derecha";
 		this.rotation.y = Math.PI / 2;
 
-		if (this.ultimo_paso == "izquierda") {
+		if (this.ultimo_paso == "izquierda" && !this.movimiento2_andar_D.isPlaying() && !this.movimiento1_andar_D.isPlaying() && !this.movimiento0_andar_D.isPlaying() && !this.movimiento2_andar_I.isPlaying() && !this.movimiento1_andar_I.isPlaying() && !this.movimiento0_andar_I.isPlaying()) {
 			this.movimiento0_andar_D.start();
 			this.ultimo_paso = "derecha";
 		}
-		else if (this.ultimo_paso == "derecha") {
+		else if (this.ultimo_paso == "derecha" && !this.movimiento2_andar_D.isPlaying() && !this.movimiento1_andar_D.isPlaying() && !this.movimiento0_andar_D.isPlaying() && !this.movimiento2_andar_I.isPlaying() && !this.movimiento1_andar_I.isPlaying() && !this.movimiento0_andar_I.isPlaying()) {
 			this.movimiento0_andar_I.start();
 			this.ultimo_paso = "izquierda";
 		}
@@ -427,7 +427,7 @@ class Lady extends THREE.Object3D {
 		this.tiempoAnterior_andar = Date.now();
 
 		this.andando_derecha = true;
-		this.pos_objetivo = this.position.x + 2;
+		this.pos_objetivo = this.position.x + 1;
 	}
 
 	izquierda() {
@@ -435,11 +435,11 @@ class Lady extends THREE.Object3D {
 		this.rotation.y = -Math.PI / 2;
 
 
-		if (this.ultimo_paso == "izquierda") {
+		if (this.ultimo_paso == "izquierda" && !this.movimiento2_andar_D.isPlaying() && !this.movimiento1_andar_D.isPlaying() && !this.movimiento0_andar_D.isPlaying() && !this.movimiento2_andar_I.isPlaying() && !this.movimiento1_andar_I.isPlaying() && !this.movimiento0_andar_I.isPlaying()) {
 			this.movimiento0_andar_D.start();
 			this.ultimo_paso = "derecha";
 		}
-		else if (this.ultimo_paso == "derecha") {
+		else if (this.ultimo_paso == "derecha" && !this.movimiento2_andar_D.isPlaying() && !this.movimiento1_andar_D.isPlaying() && !this.movimiento0_andar_D.isPlaying() && !this.movimiento2_andar_I.isPlaying() && !this.movimiento1_andar_I.isPlaying() && !this.movimiento0_andar_I.isPlaying()) {
 			this.movimiento0_andar_I.start();
 			this.ultimo_paso = "izquierda";
 		}
@@ -447,7 +447,7 @@ class Lady extends THREE.Object3D {
 		this.tiempoAnterior_andar = Date.now();
 
 		this.andando_izquierda = true;
-		this.pos_objetivo = this.position.x - 2;
+		this.pos_objetivo = this.position.x - 1;
 	}
 
 	iniciarPartida() {
@@ -457,9 +457,9 @@ class Lady extends THREE.Object3D {
 	}
 
 	ladyGolpeada() {
-		this.vida -= 1;
+		console.log("Golpeada");
+		this.vida -= 1; //Le quitamos la vida
 
-		// FIXME: Arreglar esto para que no vuelva al estado inicial
 		var that = this;
 		var desplazamiento = 8;
 		if (this.mirandoHacia == "derecha")
@@ -470,13 +470,12 @@ class Lady extends THREE.Object3D {
 		var origen1 = {desp: this.position.x, alto: this.position.y};
 		var fin1 = {desp: this.position.x + desp / 2, alto: this.position.y + 2};
 
-		var movimiento1 = new TWEEN.Tween(origen1)
+		this.movimientoDanio = new TWEEN.Tween(origen1)
 			.to(fin1, 200)
 			.easing(TWEEN.Easing.Linear.None)
 			.onUpdate(() => {
 				that.position.y = origen1.alto;
 				that.position.x = origen1.desp;
-				console.log(this.position.x)
 			})
 
 		var origen2 = {desp: this.position.x + desp / 2, alto: this.position.y + 2};
@@ -490,9 +489,13 @@ class Lady extends THREE.Object3D {
 				that.position.x = origen2.desp;
 			})
 
-		movimiento1.chain(movimiento2);
+		this.movimientoDanio.chain(movimiento2);
 
-		movimiento1.start();
+
+		//this.movimiento0_andar_I.stop();
+		//this.movimiento0_andar_D.stop();
+
+		this.movimientoDanio.start();
 	}
 
 	miVida() {
@@ -569,11 +572,18 @@ class Lady extends THREE.Object3D {
 
 		//Para andar 
 		//Izquierda
+		//Si nos golpeamos o estamos en mitad de la animacion tenemos que parar de andar
+		if (this.movimientoDanio.isPlaying()) {
+			this.andando_derecha = false;
+			this.andando_izquierda = false;
+
+		}
+
 		if (this.andando_izquierda) {
 			var tiempoActual = Date.now();
 			var seg = (tiempoActual - this.tiempoAnterior_andar) / 1000;
 
-			this.position.x -= 2 * seg * 6;
+			this.position.x -= seg * this.velocidad;
 
 			this.tiempoAnterior_andar = tiempoActual;
 
@@ -586,7 +596,7 @@ class Lady extends THREE.Object3D {
 			var tiempoActual = Date.now();
 			var seg = (tiempoActual - this.tiempoAnterior_andar) / 1000;
 
-			this.position.x += 2 * seg * 6;
+			this.position.x += seg * this.velocidad;
 
 			this.tiempoAnterior_andar = tiempoActual;
 

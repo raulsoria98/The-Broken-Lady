@@ -346,7 +346,6 @@ class MyScene extends THREE.Scene {
 						//this.lady.ladyGolpeada(); //Pasamos a un estado en el que indicamos que es invulnerable
 						this.estadoLady = "GOLPEADA";
 						this.golpeada = Date.now();
-						console.log("Después " + this.lady.position.x)
 					}
 				});
 			}
@@ -407,7 +406,7 @@ class MyScene extends THREE.Scene {
 
 		if (this.lady.position.y <= -10) // se ha caido al agua
 			this.perderPartida();
-
+			
 		if (this.estadoLady == "GOLPEADA") {
 			this.lady.ladyGolpeada();
 			this.estadoLady = "INVULNERABLE";
