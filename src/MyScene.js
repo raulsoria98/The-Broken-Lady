@@ -31,6 +31,7 @@ class MyScene extends THREE.Scene {
 
 		// Construimos los distinos elementos que tendremos en la escena
 		this.lady = new Lady(this);
+		this.lady.castShadow = true;
 		this.add(this.lady);
 
 
@@ -69,6 +70,9 @@ class MyScene extends THREE.Scene {
 			this.remove(this.mapa);
 
 		this.mapa = new Mapa();
+		this.mapa.traverseVisible((unNodo) => {
+			unNodo.reciveShadow = true;
+		})
 		this.add(this.mapa);
 
 		//Objetos
@@ -233,6 +237,11 @@ class MyScene extends THREE.Scene {
 		//this.add(this.spotLight);
 		this.directionalLight = new THREE.DirectionalLight(0xffffff, this.guiControls.lightIntensity);
 		this.directionalLight.position.set(60, 60, 200);
+		this.directionalLight.castShadow = true;
+		this.directionalLight.shadow.camera.left = -100;
+		this.directionalLight.shadow.camera.bottom = -100;
+		this.directionalLight.shadow.camera.right = 100;
+		this.directionalLight.shadow.camera.top = 100;
 		this.add(this.directionalLight);
 	}
 
@@ -241,6 +250,9 @@ class MyScene extends THREE.Scene {
 
 		// Se instancia un Renderer   WebGL
 		var renderer = new THREE.WebGLRenderer();
+
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.BasicShadowMap;
 
 		// Se establece un color de fondo en las imágenes que genera el render
 		renderer.setClearColor(new THREE.Color(0xEEEEEE), 1.0);
@@ -441,6 +453,7 @@ class MyScene extends THREE.Scene {
 		// Se actualiza el resto del modelo
 		TWEEN.update();
 		this.lady.update(this.guiControls.animacion);
+		this.mapa.update();
 
 		// Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
 		this.renderer.render(this, this.getCamera());
