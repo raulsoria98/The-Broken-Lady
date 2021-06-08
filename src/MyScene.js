@@ -65,6 +65,9 @@ class MyScene extends THREE.Scene {
 
 	iniciarPartida() {
 		//Mapa
+		if (this.mapa)
+			this.remove(this.mapa);
+
 		this.mapa = new Mapa();
 		this.add(this.mapa);
 
@@ -225,9 +228,12 @@ class MyScene extends THREE.Scene {
 		// La luz focal, además tiene una posición, y un punto de mira
 		// Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
 		// En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
-		this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
-		this.spotLight.position.set(60, 60, 200);
-		this.add(this.spotLight);
+		//this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
+		//this.spotLight.position.set(60, 60, 200);
+		//this.add(this.spotLight);
+		this.directionalLight = new THREE.DirectionalLight(0xffffff, this.guiControls.lightIntensity);
+		this.directionalLight.position.set(60, 60, 200);
+		this.add(this.directionalLight);
 	}
 
 	createRenderer(myCanvas) {
@@ -381,7 +387,7 @@ class MyScene extends THREE.Scene {
 	update() {
 		// Se actualizan los elementos de la escena para cada frame
 		// Se actualiza la intensidad de la luz con lo que haya indicado el usuario en la gui
-		this.spotLight.intensity = this.guiControls.lightIntensity;
+		//this.spotLight.intensity = this.guiControls.lightIntensity;
 
 		// Se muestran o no los ejes según lo que idique la GUI
 		//this.axis.visible = this.guiControls.axisOnOff;

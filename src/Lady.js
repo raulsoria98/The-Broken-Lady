@@ -323,7 +323,7 @@ class Lady extends THREE.Object3D {
 		var fin_morir = {rot: -90}
 
 		this.movimiento_morir = new TWEEN.Tween(origen_morir)
-			.to(fin_morir, 3000)
+			.to(fin_morir, 1000)
 			.easing(TWEEN.Easing.Quadratic.InOut)
 			.onUpdate(() => {
 				that.rotation.x = degToRad(origen_morir.rot);
@@ -452,7 +452,7 @@ class Lady extends THREE.Object3D {
 
 	iniciarPartida() {
 		//Set de la vida
-		this.vida = 10;
+		this.vida = 5;
 		this.rotation.x = 0;
 	}
 
