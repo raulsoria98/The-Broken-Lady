@@ -44,7 +44,7 @@ class MyScene extends THREE.Scene {
 		this.createGround();
 
 		this.listener_sonido = new THREE.AudioListener();
-    	this.add(this.listener_sonido);
+		this.add(this.listener_sonido);
 		// Paredes
 		// this.createParedes();
 
@@ -96,7 +96,7 @@ class MyScene extends THREE.Scene {
 		this.musica = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
 		var that = this;
-		audio_loader.load("../audio/the_field_of_dreams.mp3", function(buffer){
+		audio_loader.load("../audio/the_field_of_dreams.mp3", function (buffer) {
 			that.musica.setBuffer(buffer);
 			that.musica.setVolume(0.4);
 			that.musica.setLoop(true);
@@ -112,7 +112,7 @@ class MyScene extends THREE.Scene {
 		this.musica.stop();
 		var game_over = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
-		audio_loader.load("../audio/game_over_bad_chest.wav", function(buffer){
+		audio_loader.load("../audio/game_over_bad_chest.wav", function (buffer) {
 			game_over.setBuffer(buffer);
 			game_over.setVolume(0.4);
 			game_over.play();
@@ -127,7 +127,7 @@ class MyScene extends THREE.Scene {
 		this.musica.stop();
 		var win = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
-		audio_loader.load("../audio/youwin.mp3", function(buffer){
+		audio_loader.load("../audio/youwin.mp3", function (buffer) {
 			win.setBuffer(buffer);
 			win.setVolume(0.1);
 			win.play();
@@ -328,10 +328,10 @@ class MyScene extends THREE.Scene {
 
 						if (muere == true)
 							this.mapa.enemigoMuere(index);
-							
+
 						var sonido_martillo = new THREE.Audio(this.listener_sonido);
 						var audio_loader = new THREE.AudioLoader();
-						audio_loader.load("../audio/hit01.wav", function(buffer){
+						audio_loader.load("../audio/hit01.wav", function (buffer) {
 							sonido_martillo.setBuffer(buffer);
 							sonido_martillo.setVolume(0.1);
 							sonido_martillo.play();
@@ -378,7 +378,7 @@ class MyScene extends THREE.Scene {
 
 						var sonido_golpe = new THREE.Audio(this.listener_sonido);
 						var audio_loader = new THREE.AudioLoader();
-						audio_loader.load("../audio/punch.mp3", function(buffer){
+						audio_loader.load("../audio/punch.mp3", function (buffer) {
 							sonido_golpe.setBuffer(buffer);
 							sonido_golpe.setVolume(0.2);
 							sonido_golpe.play();
@@ -414,11 +414,11 @@ class MyScene extends THREE.Scene {
 		}
 	}
 
-	setEnemigos(){
+	setEnemigos() {
 		document.getElementById("enemigos").innerHTML = '<p>ENEMIGOS RESTANTES</p>';
-		document.getElementById("enemigos").innerHTML +='<p>'
+		document.getElementById("enemigos").innerHTML += '<p>'
 		document.getElementById("enemigos").innerHTML += this.mapa.cajasEnemigos.length;
-		document.getElementById("enemigos").innerHTML +='</p>'
+		document.getElementById("enemigos").innerHTML += '</p>'
 	}
 
 	setVida() {
@@ -459,7 +459,7 @@ class MyScene extends THREE.Scene {
 		if (this.mapa.cajasEnemigos.length == 0 && this.estado != "GANAR")
 			this.ganarPartida();
 
-		if (this.lady.position.y <= -10  && this.estado != "PERDER") // se ha caido al agua
+		if (this.lady.position.y <= -10 && this.estado != "PERDER") // se ha caido al agua
 			this.perderPartida();
 
 		if (this.estadoLady == "GOLPEADA") {

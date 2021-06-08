@@ -1,5 +1,4 @@
 import * as THREE from '../../libs/three.module.js'
-import * as TWEEN from '../../libs/tween.esm.js'
 import {MTLLoader} from '../../libs/MTLLoader.js'
 import {OBJLoader} from '../../libs/OBJLoader.js'
 
