@@ -228,28 +228,24 @@ class MyScene extends THREE.Scene {
 
 		rayCaster.forEach(ray => {
 
-			if (this.estadoLady == "VULNERABLE") {
-				enemigos.forEach((enemigo, index) => {
-					var interseccion = ray.intersectObject(enemigo, true);
+			enemigos.forEach((enemigo, index) => {
+				var interseccion = ray.intersectObject(enemigo, true);
 
-					if (interseccion.length > 0) {
-						var muere = this.mapa.enemigos[index].golpear(); //Recogemos si ha muerto o no
+				if (interseccion.length > 0) {
+					var muere = this.mapa.enemigos[index].golpear(); //Recogemos si ha muerto o no
 
-						if (muere == true)
-							this.mapa.enemigoMuere(index);
+					if (muere == true)
+						this.mapa.enemigoMuere(index);
 
-						var sonido_martillo = new THREE.Audio(this.listener_sonido);
-						var audio_loader = new THREE.AudioLoader();
-						audio_loader.load("../audio/hit01.wav", (buffer) => {
-							sonido_martillo.setBuffer(buffer);
-							sonido_martillo.setVolume(0.1);
-							sonido_martillo.play();
-						});
-					}
-				});
-			}
-
-
+					var sonido_martillo = new THREE.Audio(this.listener_sonido);
+					var audio_loader = new THREE.AudioLoader();
+					audio_loader.load("../audio/hit01.wav", (buffer) => {
+						sonido_martillo.setBuffer(buffer);
+						sonido_martillo.setVolume(0.1);
+						sonido_martillo.play();
+					});
+				}
+			});
 		});
 	}
 
