@@ -441,7 +441,6 @@ class MyScene extends THREE.Scene {
 				break;
 
 			case 'n':
-				console.log(this.estado);
 				if (this.estado == "PERDER" || this.estado == "GANAR") {
 					this.iniciarPartida();
 				}

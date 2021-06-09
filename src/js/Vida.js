@@ -6,7 +6,7 @@ function degToRad(deg) {
 	return deg * (Math.PI / 180);
 }
 
-class Corazon extends THREE.Object3D {
+class Vida extends THREE.Object3D {
 	constructor() {
 		super();
 
@@ -59,4 +59,4 @@ class Corazon extends THREE.Object3D {
 	}
 }
 
-export { Corazon };
+export { Vida };

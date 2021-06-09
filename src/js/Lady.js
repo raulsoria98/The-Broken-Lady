@@ -252,10 +252,6 @@ class Lady extends THREE.Object3D {
 
 				that.arma.position.y = -this.cajaColisionArma.geometry.parameters.height / 2 - this.mango.geometry.parameters.height - origen_ataque.cajaY;
 				that.cajaColisionArma.position.y = this.cajaColisionArma.geometry.parameters.height / 2 + this.mango.geometry.parameters.height + origen_ataque.cajaY;
-
-				//console.log(that.cajaColisionArma.position);
-
-
 			})
 			.yoyo(true).repeat(1)
 
@@ -434,7 +430,6 @@ class Lady extends THREE.Object3D {
 	}
 
 	ladyGolpeada() {
-		console.log("Golpeada");
 		this.vida -= 1; //Le quitamos la vida
 
 		var that = this;

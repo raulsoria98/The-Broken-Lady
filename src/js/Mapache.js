@@ -72,9 +72,9 @@ class Mapache extends THREE.Object3D {
 		var seg = (tiempoActual - this.tiempoAnterior) / 1000;
 
 		//Los mapaches se mueven de lado a lado y ademas giran
-		if (this.position.x >= (this.plataforma.position.x + this.plataforma.ancho() / 2 - 5))
+		if (this.position.x >= (this.plataforma.position.x + this.plataforma.getLargo() / 2 - 5))
 			this.direccion = "izquierda";
-		else if (this.position.x <= (this.plataforma.position.x - this.plataforma.ancho() / 2 + 5))
+		else if (this.position.x <= (this.plataforma.position.x - this.plataforma.getLargo() / 2 + 5))
 			this.direccion = "derecha";
 
 		if (this.direccion == "derecha") {

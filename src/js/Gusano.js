@@ -62,7 +62,6 @@ class Gusano extends THREE.Object3D {
 	}
 
 	morir() {
-		console.log("memuero");
 		this.remove(this.cajaColision);
 	}
 
@@ -75,9 +74,9 @@ class Gusano extends THREE.Object3D {
 		var tiempoActual = Date.now();
 		var seg = (tiempoActual - this.tiempoAnterior) / 1000;
 
-		if (this.position.x >= (this.plataforma.position.x + this.plataforma.ancho() / 2 - 5))
+		if (this.position.x >= (this.plataforma.position.x + this.plataforma.getLargo() / 2 - 5))
 			this.direccion = "izquierda";
-		else if (this.position.x <= (this.plataforma.position.x - this.plataforma.ancho() / 2 + 5))
+		else if (this.position.x <= (this.plataforma.position.x - this.plataforma.getLargo() / 2 + 5))
 			this.direccion = "derecha";
 
 		if (this.direccion == "derecha") {

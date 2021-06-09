@@ -37,7 +37,7 @@ class Plataforma extends THREE.Object3D {
         this.position.y = y;
     }
 
-    ancho() {
+    getLargo() {
         return this.largo;
     }
 }
