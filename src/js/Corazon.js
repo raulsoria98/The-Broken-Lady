@@ -14,7 +14,7 @@ class Corazon extends THREE.Object3D {
 		var materialLoader = new MTLLoader();
 		var objectLoader = new OBJLoader();
 
-		this.cajaColisionGeom = new THREE.BoxBufferGeometry(4, 4, 12);
+		this.cajaColisionGeom = new THREE.BoxBufferGeometry(4, 4, 4);
 		this.materialColisionador = new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0 });
 
 		this.cajaColision = new THREE.Mesh(that.cajaColisionGeom, that.materialColisionador);

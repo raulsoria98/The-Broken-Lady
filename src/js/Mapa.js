@@ -91,7 +91,7 @@ class Mapa extends THREE.Object3D {
 		this.arboles[22].modificarPosicion(this.plataformas[4].position.x + 40, this.plataformas[4].position.y + altura_plat, detras);
 		// VIDA
 		this.vidas.push(new Corazon());
-		this.vidas[0].modificarPosicion(this.plataformas[4].position.x + 30, this.plataformas[4].position.y + altura_plat);
+		this.vidas[0].modificarPosicion(this.plataformas[4].position.x + 35, this.plataformas[4].position.y + altura_plat);
 
 		//Nivel 5 (Salto)
 		this.plataformas.push(new Plataforma(50, altura_plat));
