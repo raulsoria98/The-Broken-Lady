@@ -2,14 +2,12 @@
 // Clases de la biblioteca
 
 import * as THREE from '../../libs/three.module.js'
-import {GUI} from '../../libs/dat.gui.module.js'
-import {TrackballControls} from '../../libs/TrackballControls.js'
 import * as TWEEN from '../../libs/tween.esm.js'
 
 // Clases de mi proyecto
 
-import {Lady} from './Lady.js'
-import {Mapa} from './Mapa.js'
+import { Lady } from './Lady.js'
+import { Mapa } from './Mapa.js'
 
 /// La clase fachada del modelo
 /**
@@ -20,17 +18,14 @@ class MyScene extends THREE.Scene {
 	constructor(myCanvas) {
 		super();
 
+		// Gravedad
 		this.cayendo = false;
 
 		// Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
 		this.renderer = this.createRenderer(myCanvas);
 
-		// Se añade a la gui los controles para manipular los elementos de esta clase
-		//this.gui = this.createGUI();
-
 		// Construimos los distinos elementos que tendremos en la escena
 		this.lady = new Lady(this);
-		this.lady.castShadow = true;
 		this.add(this.lady);
 
 		// Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta. Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
@@ -45,18 +40,6 @@ class MyScene extends THREE.Scene {
 
 		this.listener_sonido = new THREE.AudioListener();
 		this.add(this.listener_sonido);
-		// Paredes
-		// this.createParedes();
-
-		// Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
-		//this.axis = new THREE.AxesHelper(5);
-		//this.add(this.axis);
-
-
-		// Por último creamos el modelo.
-		// El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
-		// la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-
 
 		this.iniciarPartida();
 
@@ -69,15 +52,10 @@ class MyScene extends THREE.Scene {
 			this.remove(this.mapa);
 
 		this.mapa = new Mapa();
-		this.mapa.traverseVisible((unNodo) => {
-			unNodo.reciveShadow = true;
-		})
 		this.add(this.mapa);
 
 		//Objetos
 		this.lady.iniciarPartida();
-		this.lady.position.set(0, 0, 0); //Posicion inicial
-		this.lady.rotation.y = 0;  //Inicialmente nos mira
 
 		//Camara
 		this.iniciarCamara(); //Colocamos la camara
@@ -96,7 +74,7 @@ class MyScene extends THREE.Scene {
 		this.musica = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
 		var that = this;
-		audio_loader.load("../audio/the_field_of_dreams.mp3", function (buffer) {
+		audio_loader.load("../audio/the_field_of_dreams.mp3", (buffer) => {
 			that.musica.setBuffer(buffer);
 			that.musica.setVolume(0.4);
 			that.musica.setLoop(true);
@@ -105,14 +83,13 @@ class MyScene extends THREE.Scene {
 	}
 
 	perderPartida() {
-		console.log("perder");
 		document.getElementById("perder").style.display = "block";
 		this.estado = "PERDER";
 
 		this.musica.stop();
 		var game_over = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
-		audio_loader.load("../audio/game_over_bad_chest.wav", function (buffer) {
+		audio_loader.load("../audio/game_over_bad_chest.wav", (buffer) => {
 			game_over.setBuffer(buffer);
 			game_over.setVolume(0.4);
 			game_over.play();
@@ -120,16 +97,15 @@ class MyScene extends THREE.Scene {
 	}
 
 	ganarPartida() {
-		console.log("ganar");
 		document.getElementById("ganar").style.display = "block";
 		this.estado = "GANAR";
 
 		this.musica.stop();
 		var win = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
-		audio_loader.load("../audio/youwin.mp3", function (buffer) {
+		audio_loader.load("../audio/youwin.mp3", (buffer) => {
 			win.setBuffer(buffer);
-			win.setVolume(0.1);
+			win.setVolume(0.2);
 			win.play();
 		});
 	}
@@ -140,12 +116,6 @@ class MyScene extends THREE.Scene {
 		//   La razón de aspecto ancho/alto
 		//   Los planos de recorte cercano y lejano
 		this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
-		// También se indica dónde se coloca
-		// this.camera.position.set(0, 10, 50);
-		// Y hacia dónde mira
-		// var look = this.lady.position;
-		// this.camera.lookAt(look);
-
 	}
 
 	iniciarCamara() {
@@ -161,88 +131,36 @@ class MyScene extends THREE.Scene {
 		// La geometría es una caja con muy poca altura
 		var geometryGround = new THREE.BoxGeometry(500, 0.2, 50);
 
-
 		// El material se hará con una textura de madera
 		var texture = new THREE.TextureLoader().load('../img/water.jpg');
-		var materialGround = new THREE.MeshPhongMaterial({map: texture});
+		var materialGround = new THREE.MeshPhongMaterial({ map: texture });
 
 		// Ya se puede construir el Mesh
 		var ground = new THREE.Mesh(geometryGround, materialGround);
 
-		// Todas las figuras se crean centradas en el origen.
-		// El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
 		ground.position.x = 150;
 		ground.position.y = -6;
 		ground.position.z = 20;
 
-		var textureBack = new THREE.TextureLoader().load('../img/otrobosque.jpg');
-		this.background = textureBack;
-
 		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
 		this.add(ground);
-	}
 
-	createParedes() {
-		var geometryPared = new THREE.BoxGeometry(50, 50, 0.2);
-
-		// El material se hará con una textura de madera
-		var texture = new THREE.TextureLoader().load('../img/metalico.jpg');
-		var materialPared = new THREE.MeshPhongMaterial({map: texture, transparent: false, opacity: 0.7});
-
-		// Ya se puede construir el Mesh
-		var pared = new THREE.Mesh(geometryPared, materialPared);
-
-		// Todas las figuras se crean centradas en el origen.
-		// El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
-		pared.position.x = 0;
-		pared.position.y = 25;
-		pared.position.z = -5; //TODAS LAS PLATAFORMAS TIENEN 5 DE ANCHO
-
-
-		//Izquierda
-		var geomIzquierda = new THREE.BoxGeometry(0.2, 50, 100);
-		this.paredIzquierda = new THREE.Mesh(geomIzquierda, materialPared);
-		this.paredIzquierda.position.y = 21;
-		this.paredIzquierda.position.x = -25;
-
-		//Derecha
-		var geomDerecha = new THREE.BoxGeometry(0.2, 50, 100);
-		this.paredDerecha = new THREE.Mesh(geomDerecha, materialPared);
-		this.paredDerecha.position.y = 21;
-		this.paredDerecha.position.x = 25;
-
-
-		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
-		this.add(pared);
-		this.add(this.paredIzquierda);
-		this.add(this.paredDerecha);
-
+		var textureBack = new THREE.TextureLoader().load('../img/otrobosque.jpg');
+		this.background = textureBack;
 	}
 
 	createLights() {
 		// Se crea una luz ambiental, evita que se vean complentamente negras las zonas donde no incide de manera directa una fuente de luz
 		// La luz ambiental solo tiene un color y una intensidad
-		// Se declara como   var   y va a ser una variable local a este método
-		//    se hace así puesto que no va a ser accedida desde otros métodos
 		var ambientLight = new THREE.AmbientLight(0xccddee, 0.35);
 		// La añadimos a la escena
 		this.add(ambientLight);
+
 		this.lightIntensity = 0.5;
 
-		// Se crea una luz focal que va a ser la luz principal de la escena
-		// La luz focal, además tiene una posición, y un punto de mira
-		// Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
-		// En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
-		//this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
-		//this.spotLight.position.set(60, 60, 200);
-		//this.add(this.spotLight);
+		// Luz direccional
 		this.directionalLight = new THREE.DirectionalLight(0xffffff, this.lightIntensity);
 		this.directionalLight.position.set(100, 60, 200);
-		this.directionalLight.castShadow = true;
-		this.directionalLight.shadow.camera.left = -100;
-		this.directionalLight.shadow.camera.bottom = -100;
-		this.directionalLight.shadow.camera.right = 100;
-		this.directionalLight.shadow.camera.top = 100;
 		this.add(this.directionalLight);
 	}
 
@@ -251,9 +169,6 @@ class MyScene extends THREE.Scene {
 
 		// Se instancia un Renderer   WebGL
 		var renderer = new THREE.WebGLRenderer();
-
-		renderer.shadowMap.enabled = true;
-		renderer.shadowMap.type = THREE.BasicShadowMap;
 
 		// Se establece un color de fondo en las imágenes que genera el render
 		renderer.setClearColor(new THREE.Color(0xEEEEEE), 1.0);
@@ -268,8 +183,6 @@ class MyScene extends THREE.Scene {
 	}
 
 	getCamera() {
-		// En principio se devuelve la única cámara que tenemos
-		// Si hubiera varias cámaras, este método decidiría qué cámara devuelve cada vez que es consultado
 		return this.camera;
 	}
 
@@ -291,8 +204,7 @@ class MyScene extends THREE.Scene {
 	}
 
 	updateCamera() {
-
-		//Posicion
+		//Posicion para que siga a la Lady
 		this.camera.position.x = this.lady.position.x;
 		this.camera.position.y = this.lady.position.y + 10;
 	}
@@ -303,11 +215,9 @@ class MyScene extends THREE.Scene {
 		if (this.lady.mirandoHacia == "derecha") {
 			var posicionMartillo = new THREE.Vector3(this.lady.position.x + this.lady.cajaColisionArma.position.x, this.lady.position.y + this.lady.cajaColisionArma.position.y, this.lady.position.z + this.lady.cajaColisionArma.position.z);
 		}
-		else {
+		else { //Si la lady mira hacia la izquierda, se la restamos
 			var posicionMartillo = new THREE.Vector3(this.lady.position.x - this.lady.cajaColisionArma.position.x, this.lady.position.y + this.lady.cajaColisionArma.position.y, this.lady.position.z - this.lady.cajaColisionArma.position.z);
 		}
-		//Si la lady mira hacia la izquierda, se la restamos
-		//console.log(posicionMartillo);
 
 		var enemigos = this.mapa.cajasEnemigos;
 
@@ -323,7 +233,6 @@ class MyScene extends THREE.Scene {
 					var interseccion = ray.intersectObject(enemigo, true);
 
 					if (interseccion.length > 0) {
-						//Esta parte va en la interaccion del martillo
 						var muere = this.mapa.enemigos[index].golpear(); //Recogemos si ha muerto o no
 
 						if (muere == true)
@@ -331,13 +240,11 @@ class MyScene extends THREE.Scene {
 
 						var sonido_martillo = new THREE.Audio(this.listener_sonido);
 						var audio_loader = new THREE.AudioLoader();
-						audio_loader.load("../audio/hit01.wav", function (buffer) {
+						audio_loader.load("../audio/hit01.wav", (buffer) => {
 							sonido_martillo.setBuffer(buffer);
 							sonido_martillo.setVolume(0.1);
 							sonido_martillo.play();
 						});
-
-						console.log("Le pego al bicho");
 					}
 				});
 			}
@@ -361,10 +268,6 @@ class MyScene extends THREE.Scene {
 		var enemigos = this.mapa.cajasEnemigos;
 		var vidas = this.mapa.cajasVidas;
 
-		//console.log("Numero de enemigos: ")
-		//console.log(this.mapa.cajasEnemigos);
-
-
 		rayCaster.forEach(ray => {
 
 			if (this.estadoLady == "VULNERABLE") {
@@ -372,13 +275,12 @@ class MyScene extends THREE.Scene {
 					var interseccion = ray.intersectObject(enemigo);
 
 					if (interseccion.length > 0) {
-						//this.lady.ladyGolpeada(); //Pasamos a un estado en el que indicamos que es invulnerable
 						this.estadoLady = "GOLPEADA";
 						this.golpeada = Date.now();
 
 						var sonido_golpe = new THREE.Audio(this.listener_sonido);
 						var audio_loader = new THREE.AudioLoader();
-						audio_loader.load("../audio/punch.mp3", function (buffer) {
+						audio_loader.load("../audio/punch.mp3", (buffer) => {
 							sonido_golpe.setBuffer(buffer);
 							sonido_golpe.setVolume(0.2);
 							sonido_golpe.play();
@@ -398,7 +300,6 @@ class MyScene extends THREE.Scene {
 			vidas.forEach((vida, index) => {
 				var interseccion = ray.intersectObject(vida);
 				if (interseccion.length > 0) {
-					console.log(interseccion.length);
 					this.mapa.consumirVida(index);
 					this.lady.ladyCura();
 				}
@@ -433,21 +334,16 @@ class MyScene extends THREE.Scene {
 
 	update() {
 		// Se actualizan los elementos de la escena para cada frame
-		// Se actualiza la intensidad de la luz con lo que haya indicado el usuario en la gui
-		//this.spotLight.intensity = this.guiControls.lightIntensity;
-
-		// Se muestran o no los ejes según lo que idique la GUI
-		//this.axis.visible = this.guiControls.axisOnOff;
 
 		// Se actualiza la posición de la camara segun el movimiento de la lady
 		this.updateCamera();
 
-		//Para ver la vida
+		// Para ver la vida
 		this.setVida();
+		// Marcador de enemigos
 		this.setEnemigos();
 
 		// Colisiones
-
 		if (this.estado != "OFF" && this.estado != "PERDER") {
 			this.colisiones();
 			this.ataque();
@@ -477,6 +373,7 @@ class MyScene extends THREE.Scene {
 			}
 		}
 
+		// Simulación de gravedad
 		var tiempoAct = Date.now();
 		var transcurrido = (tiempoAct - this.tiempoAnterior) / 1000;
 		if (this.cayendo == true)
@@ -528,11 +425,6 @@ class MyScene extends THREE.Scene {
 					this.lady.mirame();
 				break;
 
-			case 'w':
-				if (this.estado == "ON")
-					this.lady.caer();
-				break;
-
 			case ' ':
 				if (this.estado == "ON") {
 					this.lady.saltar();
@@ -582,18 +474,12 @@ class MyScene extends THREE.Scene {
 			default:
 				break;
 		}
-
-		//Actualizar la camara
-		//this.nuevoTarget = this.lady.position.clone();
-		//console.log(this.nuevoTarget);
-		//this.camera.lookAt(this.nuevoTarget);
-
 	}
 
 }
 
 /// La función   main
-$(function () {
+$(() => {
 
 	// Se instancia la escena pasándole el  div  que se ha creado en el html para visualizar
 	var scene = new MyScene("#WebGL-output");
@@ -604,7 +490,4 @@ $(function () {
 
 	// Que no se nos olvide, la primera visualización.
 	scene.update();
-
-
-
 });

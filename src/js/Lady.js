@@ -9,17 +9,16 @@ class Lady extends THREE.Object3D {
 	constructor(scene) {
 		super();
 		this.vida = 0; //Mi vida
-		// Velocidad de movimiento de la Lady
-		this.velocidad = 15;
+		this.velocidad = 15; // Velocidad de movimiento de la Lady
 		this.scene = scene;
 		this.movimientoDanio = new TWEEN.Tween(); //Para el retroceso
 
 		//Cabeza - nodo
 		//Materiales
 		var texturaCuerpo = new THREE.TextureLoader().load('../img/cuerpo.jpeg');
-		var materialCuerpo = new THREE.MeshPhongMaterial({map: texturaCuerpo});
-		var materialOjitos = new THREE.MeshPhongMaterial({color: 0x000000, transparent: false, opacity: 0.7});
-		var materialMofletes = new THREE.MeshPhongMaterial({color: 0xFF0000, transparent: false, opacity: 0.7});
+		var materialCuerpo = new THREE.MeshPhongMaterial({ map: texturaCuerpo });
+		var materialOjitos = new THREE.MeshPhongMaterial({ color: 0x000000, transparent: false, opacity: 0.7 });
+		var materialMofletes = new THREE.MeshPhongMaterial({ color: 0xFF0000, transparent: false, opacity: 0.7 });
 
 		//Geometria ovalo
 		var geomOvalo = new THREE.SphereBufferGeometry(1, 30, 30);
@@ -69,7 +68,7 @@ class Lady extends THREE.Object3D {
 		//Cuernos
 		//Material cuernos
 		var texturaMadera = new THREE.TextureLoader().load('../img/madera-negra.jpg');
-		var materialCuernos = new THREE.MeshPhongMaterial({map: texturaMadera, transparent: false, opacity: 0.8});
+		var materialCuernos = new THREE.MeshPhongMaterial({ map: texturaMadera, transparent: false, opacity: 0.8 });
 
 		// Variables para la animacion
 		this.altura_cuernos = 1.2;
@@ -98,8 +97,8 @@ class Lady extends THREE.Object3D {
 		var texturaVestido = new THREE.TextureLoader().load('../img/vestido.jpg');
 
 		//Materiales
-		var materialTronquillo1 = new THREE.MeshPhongMaterial({map: texturaVestido, color: 0x8d0002});
-		var materialTronquillo2 = new THREE.MeshPhongMaterial({map: texturaVestido, color: 0x8d0002});
+		var materialTronquillo1 = new THREE.MeshPhongMaterial({ map: texturaVestido, color: 0x8d0002 });
+		var materialTronquillo2 = new THREE.MeshPhongMaterial({ map: texturaVestido, color: 0x8d0002 });
 
 
 		//Tronco
@@ -143,7 +142,7 @@ class Lady extends THREE.Object3D {
 
 		// Arma
 		var cajaColisionGeomArma = new THREE.BoxBufferGeometry(2.5, 2.5, 2.5);
-		var materialColisionadorArma = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+		var materialColisionadorArma = new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0 });
 		this.cajaColisionArma = new THREE.Mesh(cajaColisionGeomArma, materialColisionadorArma);
 		// this.cajaColisionArma.rotation.y = 0;
 
@@ -154,8 +153,6 @@ class Lady extends THREE.Object3D {
 		this.mazo = new THREE.Mesh(geomMazo, materialCuernos);
 		this.mazo.position.y += this.mazo.geometry.parameters.height / 2 + this.mango.geometry.parameters.height;
 		this.mango.position.y += this.mango.geometry.parameters.height / 2;
-
-
 
 		this.arma = new THREE.Object3D();
 		this.arma.add(this.mango, this.mazo);
@@ -211,7 +208,7 @@ class Lady extends THREE.Object3D {
 
 		//Cajas para las colisiones
 		this.cajaColisionGeom = new THREE.BoxBufferGeometry(4, 7, 4);
-		this.materialColisionador = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+		this.materialColisionador = new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0 });
 		this.cajaColision = new THREE.Mesh(this.cajaColisionGeom, this.materialColisionador);
 
 		this.cajaColision.position.y = 4;
@@ -233,8 +230,8 @@ class Lady extends THREE.Object3D {
 		this.ultimo_paso = "izquierda";
 
 		//TWEEN ATAQUE
-		var origen_ataque = {rot_brazo: 0, rot_arma: 90, rot_palante: 0, cajaX: 0, cajaY: 0, cajaZ: 0}
-		var fin_ataque = {rot_brazo: -60, rot_arma: 110, rot_palante: 45, cajaX: 2, cajaY: -1, cajaZ: 2}
+		var origen_ataque = { rot_brazo: 0, rot_arma: 90, rot_palante: 0, cajaX: 0, cajaY: 0, cajaZ: 0 }
+		var fin_ataque = { rot_brazo: -60, rot_arma: 110, rot_palante: 45, cajaX: 2, cajaY: -1, cajaZ: 2 }
 
 		var that = this;
 		this.movimiento_ataque = new TWEEN.Tween(origen_ataque)
@@ -251,9 +248,9 @@ class Lady extends THREE.Object3D {
 
 				that.arma.position.z = -origen_ataque.cajaZ;
 				that.cajaColisionArma.position.z = origen_ataque.cajaZ;
-				
 
-				that.arma.position.y = -this.cajaColisionArma.geometry.parameters.height / 2 - this.mango.geometry.parameters.height -origen_ataque.cajaY;
+
+				that.arma.position.y = -this.cajaColisionArma.geometry.parameters.height / 2 - this.mango.geometry.parameters.height - origen_ataque.cajaY;
 				that.cajaColisionArma.position.y = this.cajaColisionArma.geometry.parameters.height / 2 + this.mango.geometry.parameters.height + origen_ataque.cajaY;
 
 				//console.log(that.cajaColisionArma.position);
@@ -263,14 +260,14 @@ class Lady extends THREE.Object3D {
 			.yoyo(true).repeat(1)
 
 		//TWEEN ANDARq
-		var origen0_andar = {rot_pierna0: 0}
-		var fin0_andar = {rot_pierna0: -35}
+		var origen0_andar = { rot_pierna0: 0 }
+		var fin0_andar = { rot_pierna0: -35 }
 
-		var origen1_andar = {rot_pierna1: 0}
-		var fin1_andar = {rot_pierna1: 35}
+		var origen1_andar = { rot_pierna1: 0 }
+		var fin1_andar = { rot_pierna1: 35 }
 
-		var origen2_andar = {rot_pierna1: 35, rot_pierna0: -35}
-		var fin2_andar = {rot_pierna1: 0, rot_pierna0: 0}
+		var origen2_andar = { rot_pierna1: 35, rot_pierna0: -35 }
+		var fin2_andar = { rot_pierna1: 0, rot_pierna0: 0 }
 
 		// Pierna Dcha Primero
 		this.movimiento0_andar_D = new TWEEN.Tween(origen0_andar)
@@ -327,8 +324,8 @@ class Lady extends THREE.Object3D {
 		this.mirandoHacia = "derecha";
 
 		// Movimiento morir
-		var origen_morir = {rot: 0}
-		var fin_morir = {rot: -90}
+		var origen_morir = { rot: 0 }
+		var fin_morir = { rot: -90 }
 
 		this.movimiento_morir = new TWEEN.Tween(origen_morir)
 			.to(fin_morir, 1000)
@@ -338,33 +335,8 @@ class Lady extends THREE.Object3D {
 			})
 	}
 
-	createGUI(gui, titleGui) {
-		var that = this;
-
-		this.guiControls = new function () {
-			this.escalado = 1;
-
-			this.reset = function () {
-				this.escalado = 1;
-
-				that.cilindro.scale.x = this.escalado;
-				that.cambiarEscalado(this.escalado, that);
-			}
-		}
-
-		var folder = gui.addFolder(titleGui);
-
-		folder.add(this.guiControls, "escalado", 1, 8, 1).name("Escalado: ").listen().onChange((value) => {
-			that.cilindro.scale.x = value;
-			this.cambiarEscalado(value, that);
-		});
-
-		folder.add(this.guiControls, 'reset').name('[ Reset ]');
-	}
-
 	atacar() {
 		this.movimiento_ataque.start();
-
 	}
 
 	//Funciones para el movimiento
@@ -379,8 +351,8 @@ class Lady extends THREE.Object3D {
 		else
 			var desp = -desplazamiento;
 
-		var origen1 = {escala_piernas: 1, pos: this.position.y};
-		var fin1 = {escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado)};
+		var origen1 = { escala_piernas: 1, pos: this.position.y };
+		var fin1 = { escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado) };
 
 		var movimiento1 = new TWEEN.Tween(origen1)
 			.to(fin1, 200)
@@ -391,8 +363,8 @@ class Lady extends THREE.Object3D {
 				that.position.y = origen1.pos;
 			})
 
-		var origen2 = {escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado), desp: this.position.x};
-		var fin2 = {escala_piernas: 1, pos: this.position.y + salto, desp: this.position.x + desp};
+		var origen2 = { escala_piernas: escalado, pos: this.position.y - this.largoPierna * (1 - escalado), desp: this.position.x };
+		var fin2 = { escala_piernas: 1, pos: this.position.y + salto, desp: this.position.x + desp };
 
 		var movimiento2 = new TWEEN.Tween(origen2)
 			.to(fin2, 500)
@@ -412,11 +384,6 @@ class Lady extends THREE.Object3D {
 	//Esto solo hace que mire hacia delante
 	mirame() {
 		this.rotation.y = 0;
-	}
-
-	//Prueba
-	caer() {
-		this.position.y -= 4;
 	}
 
 	derecha() {
@@ -461,6 +428,8 @@ class Lady extends THREE.Object3D {
 	iniciarPartida() {
 		//Set de la vida
 		this.vida = 5;
+		this.position.set(0, 0, 0); //Posicion inicial
+		this.rotation.y = 0;  //Inicialmente nos mira
 		this.rotation.x = 0;
 	}
 
@@ -475,8 +444,8 @@ class Lady extends THREE.Object3D {
 		else
 			var desp = desplazamiento;
 
-		var origen1 = {desp: this.position.x, alto: this.position.y};
-		var fin1 = {desp: this.position.x + desp / 2, alto: this.position.y + 2};
+		var origen1 = { desp: this.position.x, alto: this.position.y };
+		var fin1 = { desp: this.position.x + desp / 2, alto: this.position.y + 2 };
 
 		this.movimientoDanio = new TWEEN.Tween(origen1)
 			.to(fin1, 200)
@@ -486,8 +455,8 @@ class Lady extends THREE.Object3D {
 				that.position.x = origen1.desp;
 			})
 
-		var origen2 = {desp: this.position.x + desp / 2, alto: this.position.y + 2};
-		var fin2 = {desp: this.position.x + desp, alto: this.position.y};
+		var origen2 = { desp: this.position.x + desp / 2, alto: this.position.y + 2 };
+		var fin2 = { desp: this.position.x + desp, alto: this.position.y };
 
 		var movimiento2 = new TWEEN.Tween(origen2)
 			.to(fin2, 300)
@@ -499,14 +468,10 @@ class Lady extends THREE.Object3D {
 
 		this.movimientoDanio.chain(movimiento2);
 
-
-		//this.movimiento0_andar_I.stop();
-		//this.movimiento0_andar_D.stop();
-
 		this.movimientoDanio.start();
 	}
 
-	ladyCura(){
+	ladyCura() {
 		//Nos curamos una unidad de vida
 		this.vida += 1;
 	}
@@ -556,9 +521,8 @@ class Lady extends THREE.Object3D {
 		this.tiempoAns = tiempoActual;
 
 		//Parpadeo   
-		if (intervalo >= 5) {
+		if (intervalo >= 4) {
 			this.parpadeo = true;
-
 		}
 
 		// Animacion cuernos
@@ -617,12 +581,6 @@ class Lady extends THREE.Object3D {
 				this.andando_derecha = false;
 		}
 	}
-
-
-
-
 }
 
-
-
-export {Lady};
+export { Lady };

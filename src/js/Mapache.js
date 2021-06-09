@@ -1,6 +1,6 @@
 import * as THREE from '../../libs/three.module.js'
-import {MTLLoader} from '../../libs/MTLLoader.js'
-import {OBJLoader} from '../../libs/OBJLoader.js'
+import { MTLLoader } from '../../libs/MTLLoader.js'
+import { OBJLoader } from '../../libs/OBJLoader.js'
 
 
 function degToRad(deg) {
@@ -20,7 +20,7 @@ class Mapache extends THREE.Object3D {
 		var objectLoader = new OBJLoader();
 
 		this.cajaColisionGeom = new THREE.BoxBufferGeometry(4, 4, 4);
-		this.materialColisionador = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+		this.materialColisionador = new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0 });
 
 
 		this.cajaColision = new THREE.Mesh(that.cajaColisionGeom, that.materialColisionador);
@@ -33,7 +33,6 @@ class Mapache extends THREE.Object3D {
 
 				that.cajaColision.position.y = 2;
 				that.modelo.position.y = 1;
-				//that.modelo.position.z = 1;
 
 				that.modelo.scale.x = 1;
 				that.modelo.scale.y = 1;
@@ -59,13 +58,7 @@ class Mapache extends THREE.Object3D {
 		}
 	}
 
-	iniciarGame() {
-		this.vida = 3;
-		this.add(this.cajaColision);
-	}
-
 	morir() {
-		console.log("memuero");
 		this.remove(this.cajaColision);
 	}
 
@@ -78,7 +71,7 @@ class Mapache extends THREE.Object3D {
 		var tiempoActual = Date.now();
 		var seg = (tiempoActual - this.tiempoAnterior) / 1000;
 
-        //Los mapaches se mueven de lado a lado y ademas giran
+		//Los mapaches se mueven de lado a lado y ademas giran
 		if (this.position.x >= (this.plataforma.position.x + this.plataforma.ancho() / 2 - 5))
 			this.direccion = "izquierda";
 		else if (this.position.x <= (this.plataforma.position.x - this.plataforma.ancho() / 2 + 5))
@@ -86,15 +79,15 @@ class Mapache extends THREE.Object3D {
 
 		if (this.direccion == "derecha") {
 			this.position.x += this.velocidad * seg;
-			this.rotation.y += degToRad(90)*seg;
+			this.rotation.y += degToRad(90) * seg;
 		}
 		else {
 			this.position.x -= this.velocidad * seg;
-			this.rotation.y += degToRad(-90)*seg;
+			this.rotation.y += degToRad(-90) * seg;
 		}
 
 		this.tiempoAnterior = tiempoActual;
 	}
 }
 
-export {Mapache}
+export { Mapache }

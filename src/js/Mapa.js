@@ -1,10 +1,10 @@
 import * as THREE from '../../libs/three.module.js'
 
-import {Plataforma} from './Plataforma.js'
-import {Gusano} from './Gusano.js'
-import {Arbol} from './Arbol.js'
-import {Mapache} from './Mapache.js'
-import {Corazon} from './Corazon.js'
+import { Plataforma } from './Plataforma.js'
+import { Gusano } from './Gusano.js'
+import { Arbol } from './Arbol.js'
+import { Mapache } from './Mapache.js'
+import { Corazon } from './Corazon.js'
 
 class Mapa extends THREE.Object3D {
 	constructor() {
@@ -89,7 +89,10 @@ class Mapa extends THREE.Object3D {
 		this.arboles[21].modificarPosicion(this.plataformas[4].position.x + 25, this.plataformas[4].position.y + altura_plat, delante);
 		this.arboles.push(new Arbol());
 		this.arboles[22].modificarPosicion(this.plataformas[4].position.x + 40, this.plataformas[4].position.y + altura_plat, detras);
-		
+		// VIDA
+		this.vidas.push(new Corazon());
+		this.vidas[0].modificarPosicion(this.plataformas[4].position.x + 30, this.plataformas[4].position.y + altura_plat);
+
 		//Nivel 5 (Salto)
 		this.plataformas.push(new Plataforma(50, altura_plat));
 		this.plataformas[5].modificarPosicion(this.plataformas[4].position.x + this.plataformas[4].ancho() / 2 + this.plataformas[5].ancho() / 2, salto * 3);
@@ -151,7 +154,7 @@ class Mapa extends THREE.Object3D {
 		this.arboles[42].modificarPosicion(this.plataformas[9].position.x + 30, this.plataformas[9].position.y + altura_plat, detras);
 		// VIDA
 		this.vidas.push(new Corazon());
-		this.vidas[0].modificarPosicion(this.plataformas[9].position.x + 0, this.plataformas[9].position.y + altura_plat);
+		this.vidas[1].modificarPosicion(this.plataformas[9].position.x + 0, this.plataformas[9].position.y + altura_plat);
 
 
 		//Nivel 10 (Salto)
@@ -247,8 +250,6 @@ class Mapa extends THREE.Object3D {
 	}
 
 	enemigoMuere(enemy) {
-		console.log("Muere el enemigo: ")
-		console.log(enemy);
 		this.cajasEnemigos.splice(enemy, 1);
 		this.enemigos.splice(enemy, 1);
 	}
@@ -265,4 +266,4 @@ class Mapa extends THREE.Object3D {
 	}
 }
 
-export {Mapa}
+export { Mapa }

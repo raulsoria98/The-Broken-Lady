@@ -1,6 +1,6 @@
 import * as THREE from '../../libs/three.module.js'
-import {MTLLoader} from '../../libs/MTLLoader.js'
-import {OBJLoader} from '../../libs/OBJLoader.js'
+import { MTLLoader } from '../../libs/MTLLoader.js'
+import { OBJLoader } from '../../libs/OBJLoader.js'
 
 class Arbol extends THREE.Object3D {
 	constructor() {
@@ -16,7 +16,6 @@ class Arbol extends THREE.Object3D {
 				that.modelo = object;
 
 				that.modelo.position.y = 0;
-				// that.modelo.position.z = -1;
 
 				that.modelo.scale.x = 3;
 				that.modelo.scale.y = 3;
@@ -37,4 +36,4 @@ class Arbol extends THREE.Object3D {
 	}
 }
 
-export {Arbol};
+export { Arbol };

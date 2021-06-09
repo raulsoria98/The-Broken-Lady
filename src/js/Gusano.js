@@ -1,7 +1,6 @@
 import * as THREE from '../../libs/three.module.js'
-import * as TWEEN from '../../libs/tween.esm.js'
-import {MTLLoader} from '../../libs/MTLLoader.js'
-import {OBJLoader} from '../../libs/OBJLoader.js'
+import { MTLLoader } from '../../libs/MTLLoader.js'
+import { OBJLoader } from '../../libs/OBJLoader.js'
 
 
 function degToRad(deg) {
@@ -21,7 +20,7 @@ class Gusano extends THREE.Object3D {
 		var objectLoader = new OBJLoader();
 
 		this.cajaColisionGeom = new THREE.BoxBufferGeometry(4, 4, 12);
-		this.materialColisionador = new THREE.MeshBasicMaterial({color: 0x000, transparent: true, opacity: 0});
+		this.materialColisionador = new THREE.MeshBasicMaterial({ color: 0x000, transparent: true, opacity: 0 });
 
 
 		this.cajaColision = new THREE.Mesh(that.cajaColisionGeom, that.materialColisionador);
@@ -62,11 +61,6 @@ class Gusano extends THREE.Object3D {
 		}
 	}
 
-	iniciarGame() {
-		this.vida = 3;
-		this.add(this.cajaColision);
-	}
-
 	morir() {
 		console.log("memuero");
 		this.remove(this.cajaColision);
@@ -99,4 +93,4 @@ class Gusano extends THREE.Object3D {
 	}
 }
 
-export {Gusano}
+export { Gusano }
