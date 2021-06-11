@@ -115,7 +115,7 @@ class MyScene extends THREE.Scene {
 		//   El ángulo del campo de visión en grados sexagesimales
 		//   La razón de aspecto ancho/alto
 		//   Los planos de recorte cercano y lejano
-		this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
+		this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
 	}
 
 	iniciarCamara() {
