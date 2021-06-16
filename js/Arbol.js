@@ -1,6 +1,6 @@
-import * as THREE from '../../libs/three.module.js'
-import { MTLLoader } from '../../libs/MTLLoader.js'
-import { OBJLoader } from '../../libs/OBJLoader.js'
+import * as THREE from '../libs/three.module.js'
+import { MTLLoader } from '../libs/MTLLoader.js'
+import { OBJLoader } from '../libs/OBJLoader.js'
 
 class Arbol extends THREE.Object3D {
 	constructor() {
@@ -10,9 +10,9 @@ class Arbol extends THREE.Object3D {
 		var materialLoader = new MTLLoader();
 		var objectLoader = new OBJLoader();
 
-		materialLoader.load('../models/tree/tree_bonus.mtl', (materials) => {
+		materialLoader.load('./models/tree/tree_bonus.mtl', (materials) => {
 			objectLoader.setMaterials(materials);
-			objectLoader.load('../models/tree/tree_bonus.obj', (object) => {
+			objectLoader.load('./models/tree/tree_bonus.obj', (object) => {
 				that.modelo = object;
 
 				that.modelo.position.y = 0;

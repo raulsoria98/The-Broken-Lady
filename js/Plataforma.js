@@ -1,4 +1,4 @@
-import * as THREE from '../../libs/three.module.js'
+import * as THREE from '../libs/three.module.js'
 
 class Plataforma extends THREE.Object3D {
     constructor(largo, alto) {
@@ -6,13 +6,13 @@ class Plataforma extends THREE.Object3D {
         var ancho = 25;
         this.largo = largo;
 
-        var texturaAbajo = new THREE.TextureLoader().load('../img/Brick_02.png');
+        var texturaAbajo = new THREE.TextureLoader().load('./img/Brick_02.png');
         texturaAbajo.wrapS = THREE.RepeatWrapping;
         texturaAbajo.wrapT = THREE.RepeatWrapping;
         texturaAbajo.repeat.set(10, 1);
         var materialAbajo = new THREE.MeshPhongMaterial({ map: texturaAbajo });
 
-        var texturaArriba = new THREE.TextureLoader().load('../img/hierba-verde.png');
+        var texturaArriba = new THREE.TextureLoader().load('./img/hierba-verde.png');
         texturaArriba.wrapS = THREE.RepeatWrapping;
         texturaArriba.wrapT = THREE.RepeatWrapping;
         texturaArriba.repeat.set(10, 1);

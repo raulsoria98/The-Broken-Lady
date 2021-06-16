@@ -1,4 +1,4 @@
-import * as THREE from '../../libs/three.module.js'
+import * as THREE from '../libs/three.module.js'
 
 import { Plataforma } from './Plataforma.js'
 import { Gusano } from './Gusano.js'

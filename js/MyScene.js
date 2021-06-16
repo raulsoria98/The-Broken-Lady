@@ -1,8 +1,8 @@
 
 // Clases de la biblioteca
 
-import * as THREE from '../../libs/three.module.js'
-import * as TWEEN from '../../libs/tween.esm.js'
+import * as THREE from '../libs/three.module.js'
+import * as TWEEN from '../libs/tween.esm.js'
 
 // Clases de mi proyecto
 
@@ -74,7 +74,7 @@ class MyScene extends THREE.Scene {
 		this.musica = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
 		var that = this;
-		audio_loader.load("../audio/the_field_of_dreams.mp3", (buffer) => {
+		audio_loader.load("./audio/the_field_of_dreams.mp3", (buffer) => {
 			that.musica.setBuffer(buffer);
 			that.musica.setVolume(0.4);
 			that.musica.setLoop(true);
@@ -89,7 +89,7 @@ class MyScene extends THREE.Scene {
 		this.musica.stop();
 		var game_over = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
-		audio_loader.load("../audio/game_over_bad_chest.wav", (buffer) => {
+		audio_loader.load("./audio/game_over_bad_chest.wav", (buffer) => {
 			game_over.setBuffer(buffer);
 			game_over.setVolume(0.4);
 			game_over.play();
@@ -103,7 +103,7 @@ class MyScene extends THREE.Scene {
 		this.musica.stop();
 		var win = new THREE.Audio(this.listener_sonido);
 		var audio_loader = new THREE.AudioLoader();
-		audio_loader.load("../audio/youwin.mp3", (buffer) => {
+		audio_loader.load("./audio/youwin.mp3", (buffer) => {
 			win.setBuffer(buffer);
 			win.setVolume(0.2);
 			win.play();
@@ -132,7 +132,7 @@ class MyScene extends THREE.Scene {
 		var geometryGround = new THREE.BoxGeometry(500, 0.2, 50);
 
 		// El material se hará con una textura de madera
-		var texture = new THREE.TextureLoader().load('../img/water.jpg');
+		var texture = new THREE.TextureLoader().load('./img/water.jpg');
 		var materialGround = new THREE.MeshPhongMaterial({ map: texture });
 
 		// Ya se puede construir el Mesh
@@ -145,7 +145,7 @@ class MyScene extends THREE.Scene {
 		// Que no se nos olvide añadirlo a la escena, que en este caso es  this
 		this.add(ground);
 
-		var textureBack = new THREE.TextureLoader().load('../img/otrobosque.jpg');
+		var textureBack = new THREE.TextureLoader().load('./img/otrobosque.jpg');
 		this.background = textureBack;
 	}
 
@@ -239,7 +239,7 @@ class MyScene extends THREE.Scene {
 
 					var sonido_martillo = new THREE.Audio(this.listener_sonido);
 					var audio_loader = new THREE.AudioLoader();
-					audio_loader.load("../audio/hit01.wav", (buffer) => {
+					audio_loader.load("./audio/hit01.wav", (buffer) => {
 						sonido_martillo.setBuffer(buffer);
 						sonido_martillo.setVolume(0.1);
 						sonido_martillo.play();
@@ -276,7 +276,7 @@ class MyScene extends THREE.Scene {
 
 						var sonido_golpe = new THREE.Audio(this.listener_sonido);
 						var audio_loader = new THREE.AudioLoader();
-						audio_loader.load("../audio/punch.mp3", (buffer) => {
+						audio_loader.load("./audio/punch.mp3", (buffer) => {
 							sonido_golpe.setBuffer(buffer);
 							sonido_golpe.setVolume(0.2);
 							sonido_golpe.play();
@@ -325,7 +325,7 @@ class MyScene extends THREE.Scene {
 		document.getElementById("vida").innerHTML = '<p>SALUD</p>';
 
 		for (var i = 0; i < this.lady.miVida(); i++)
-			document.getElementById("vida").innerHTML += '<img src="../img/vida.png" />';
+			document.getElementById("vida").innerHTML += '<img src="./img/vida.png" />';
 	}
 
 	update() {

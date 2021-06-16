@@ -1,6 +1,6 @@
-import * as THREE from '../../libs/three.module.js'
-import { MTLLoader } from '../../libs/MTLLoader.js'
-import { OBJLoader } from '../../libs/OBJLoader.js'
+import * as THREE from '../libs/three.module.js'
+import { MTLLoader } from '../libs/MTLLoader.js'
+import { OBJLoader } from '../libs/OBJLoader.js'
 
 
 function degToRad(deg) {
@@ -25,9 +25,9 @@ class Mapache extends THREE.Object3D {
 
 		this.cajaColision = new THREE.Mesh(that.cajaColisionGeom, that.materialColisionador);
 
-		materialLoader.load('../models/mapache/mapache.mtl', (materials) => {
+		materialLoader.load('./models/mapache/mapache.mtl', (materials) => {
 			objectLoader.setMaterials(materials);
-			objectLoader.load('../models/mapache/mapache.obj', (object) => {
+			objectLoader.load('./models/mapache/mapache.obj', (object) => {
 				that.modelo = object;
 
 

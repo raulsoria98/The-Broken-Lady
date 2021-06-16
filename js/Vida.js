@@ -1,6 +1,6 @@
-import * as THREE from '../../libs/three.module.js'
-import { MTLLoader } from '../../libs/MTLLoader.js'
-import { OBJLoader } from '../../libs/OBJLoader.js'
+import * as THREE from '../libs/three.module.js'
+import { MTLLoader } from '../libs/MTLLoader.js'
+import { OBJLoader } from '../libs/OBJLoader.js'
 
 function degToRad(deg) {
 	return deg * (Math.PI / 180);
@@ -19,9 +19,9 @@ class Vida extends THREE.Object3D {
 
 		this.cajaColision = new THREE.Mesh(that.cajaColisionGeom, that.materialColisionador);
 
-		materialLoader.load('../models/corazon/Love.mtl', (materials) => {
+		materialLoader.load('./models/corazon/Love.mtl', (materials) => {
 			objectLoader.setMaterials(materials);
-			objectLoader.load('../models/corazon/Love.obj', (object) => {
+			objectLoader.load('./models/corazon/Love.obj', (object) => {
 				that.modelo = object;
 
 				that.cajaColision.position.y = 2;

@@ -1,6 +1,6 @@
-import * as THREE from '../../libs/three.module.js'
-import { MTLLoader } from '../../libs/MTLLoader.js'
-import { OBJLoader } from '../../libs/OBJLoader.js'
+import * as THREE from '../libs/three.module.js'
+import { MTLLoader } from '../libs/MTLLoader.js'
+import { OBJLoader } from '../libs/OBJLoader.js'
 
 
 function degToRad(deg) {
@@ -25,9 +25,9 @@ class Gusano extends THREE.Object3D {
 
 		this.cajaColision = new THREE.Mesh(that.cajaColisionGeom, that.materialColisionador);
 
-		materialLoader.load('../models/space-monster/space-monster.mtl', (materials) => {
+		materialLoader.load('./models/space-monster/space-monster.mtl', (materials) => {
 			objectLoader.setMaterials(materials);
-			objectLoader.load('../models/space-monster/space-monster.obj', (object) => {
+			objectLoader.load('./models/space-monster/space-monster.obj', (object) => {
 				that.modelo = object;
 
 

@@ -1,5 +1,5 @@
-import * as THREE from '../../libs/three.module.js'
-import * as TWEEN from '../../libs/tween.esm.js'
+import * as THREE from '../libs/three.module.js'
+import * as TWEEN from '../libs/tween.esm.js'
 
 function degToRad(deg) {
 	return deg * (Math.PI / 180);
@@ -15,7 +15,7 @@ class Lady extends THREE.Object3D {
 
 		//Cabeza - nodo
 		//Materiales
-		var texturaCuerpo = new THREE.TextureLoader().load('../img/cuerpo.jpeg');
+		var texturaCuerpo = new THREE.TextureLoader().load('./img/cuerpo.jpeg');
 		var materialCuerpo = new THREE.MeshPhongMaterial({ map: texturaCuerpo });
 		var materialOjitos = new THREE.MeshPhongMaterial({ color: 0x000000, transparent: false, opacity: 0.7 });
 		var materialMofletes = new THREE.MeshPhongMaterial({ color: 0xFF0000, transparent: false, opacity: 0.7 });
@@ -67,7 +67,7 @@ class Lady extends THREE.Object3D {
 
 		//Cuernos
 		//Material cuernos
-		var texturaMadera = new THREE.TextureLoader().load('../img/madera-negra.jpg');
+		var texturaMadera = new THREE.TextureLoader().load('./img/madera-negra.jpg');
 		var materialCuernos = new THREE.MeshPhongMaterial({ map: texturaMadera, transparent: false, opacity: 0.8 });
 
 		// Variables para la animacion
@@ -94,7 +94,7 @@ class Lady extends THREE.Object3D {
 		// TODO: ¿Cómo podemos hacer una capa?
 		//Cuerpo
 		//Textura
-		var texturaVestido = new THREE.TextureLoader().load('../img/vestido.jpg');
+		var texturaVestido = new THREE.TextureLoader().load('./img/vestido.jpg');
 
 		//Materiales
 		var materialTronquillo1 = new THREE.MeshPhongMaterial({ map: texturaVestido, color: 0x8d0002 });
